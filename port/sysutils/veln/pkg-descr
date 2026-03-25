@@ -1,0 +1,20 @@
+Veln is a FreeBSD virtualization management CLI that provides a user-friendly
+interface for managing bhyve virtual machines.
+
+Features:
+- VM lifecycle management (create, start, stop, destroy)
+- ZFS integration with snapshots, clones, and ZVOLs
+- ISO image management with automatic downloads
+- VM templates for rapid deployment
+- Cloud-init integration for automated guest configuration
+- REST API server for remote management
+- VNC console support
+- UUID support for VM identification
+- Resource monitoring with safety buffers
+- Bhyve requirement checking
+
+Veln abstracts the complexity of bhyve command-line arguments while providing
+access to advanced features. It supports both TAP+bridge networking for simple
+setups and VALE for high-performance networking.
+
+WWW: https://github.com/vessaix/veln

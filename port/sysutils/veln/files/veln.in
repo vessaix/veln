@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# PROVIDE: veln
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# veln_enable (bool):   Set to YES to enable veln API server.
+#                       Default: NO
+# veln_bind (str):      Bind address for API server.
+#                       Default: 127.0.0.1
+# veln_port (int):      Port for API server.
+#                       Default: 8080
+# veln_config (str):    Path to configuration file.
+#                       Default: /usr/local/etc/veln.toml
+
+. /etc/rc.subr
+
+name="veln"
+rcvar="veln_enable"
+
+load_rc_config $name
+
+: ${veln_enable="NO"}
+: ${veln_bind="127.0.0.1"}
+: ${veln_port="8080"}
+: ${veln_config="/usr/local/etc/veln.toml"}
+
+command="/usr/local/bin/veln"
+command_args="api --bind ${veln_bind} --port ${veln_port}"
+
+run_rc_command "$1"

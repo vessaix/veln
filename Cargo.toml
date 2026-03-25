@@ -1,0 +1,28 @@
+[package]
+name = "veln"
+version = "0.1.0"
+edition = "2021"
+authors = ["Amr Essam <amr@vessaix.com>"]
+description = "FreeBSD Virtualization Management CLI"
+license = "BSD-3-Clause"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+miette = { version = "7.2", features = ["fancy"] }
+thiserror = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+is-root = "0.1"
+chrono = { version = "0.4", features = ["serde"] }
+rouille = "3.6"
+
+[dev-dependencies]
+pretty_assertions = "1.4"
