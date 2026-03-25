@@ -162,6 +162,20 @@
 - [x] Add proper HTTP status codes
 - [x] Create Api command in CLI (veln api --bind 127.0.0.1 --port 8080)
 
+## Installation & Packaging Phase
+- [x] Create install.sh with source install and manifest tracking
+- [x] Create uninstall.sh for clean removal of all installed files
+- [x] Add package creation support (FreeBSD .pkg format)
+- [x] Add local package repository setup
+- [x] Create quick package builder (make-pkg.sh)
+- [x] Update justfile with install/package/uninstall targets
+- [x] Create comprehensive INSTALL.md documentation
+- [x] Add installation status command
+- [x] Add dry-run mode for uninstall
+- [x] Add purge mode to remove all VM data
+- [x] Support for pkg install/remove workflow
+- [x] Create FreeBSD port files (Makefile, pkg-descr, distinfo)
+
 ## Future Phases
 - [ ] Web UI
 - [ ] Integration tests (requires FreeBSD environment)

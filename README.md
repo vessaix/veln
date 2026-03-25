@@ -41,29 +41,120 @@ Veln is a FreeBSD-native virtualization management tool built in Rust. It provid
 
 ## Installation
 
-### From Source
+Veln offers multiple installation methods to suit different needs:
+
+### Quick Start (Package - Recommended for Testing)
+
+Create a FreeBSD package and install with one command:
 
 ```bash
-# Clone the repository
+# Clone and create package
 git clone https://github.com/vessaix/veln.git
 cd veln
+./install.sh --package
 
-# Build release binary
-cargo build --release
+# Install it
+sudo pkg add ./packages/veln-*.pkg
 
-# Install (optional)
-sudo cp target/release/veln /usr/local/bin/
+# Verify
+veln --version
 ```
 
-### Using Just
+**Uninstall:** `sudo pkg remove veln` (removes everything cleanly)
+
+### Method 1: Package Installation (Recommended for Users)
+
+Best for users who want easy installation and clean uninstallation:
 
 ```bash
-# Build and test
-just qa
-
-# Install locally
-sudo just install
+./install.sh --package
+sudo pkg add ./packages/veln-*.pkg
 ```
+
+**Uninstall:** `sudo pkg remove veln`
+
+### Method 2: Source Installation (Recommended for Developers)
+
+Best for development with full tracking and clean uninstall:
+
+```bash
+./install.sh
+```
+
+This creates a manifest that tracks every installed file.
+
+**Uninstall:** `sudo /usr/local/bin/veln-uninstall` or `just uninstall`
+
+**Purge (remove everything including VMs):** `just uninstall-purge`
+
+### Method 3: Local Package Repository
+
+Best for managing veln with `pkg install/remove` without official ports:
+
+```bash
+# Set up local repository
+./install.sh --local-repo
+
+# Configure pkg
+echo 'veln: { url: "file:///usr/local/poudriere/veln-repo", enabled: yes }' | sudo tee /usr/local/etc/pkg/repos/veln.conf
+
+# Install via pkg
+sudo pkg update
+sudo pkg install veln
+```
+
+**Uninstall:** `sudo pkg remove veln`
+
+### Method 4: FreeBSD Port (Production)
+
+Best for production systems using official FreeBSD ports:
+
+```bash
+# Copy port to ports tree
+sudo cp -r port/sysutils/veln /usr/ports/sysutils/
+
+# Build and install
+cd /usr/ports/sysutils/veln
+sudo make install clean
+```
+
+**Uninstall:** `sudo make deinstall` or `sudo pkg remove veln`
+
+### Method 5: Manual Build (Experts)
+
+```bash
+# Build
+cargo build --release
+
+# Install manually
+sudo cp target/release/veln /usr/local/bin/
+sudo chmod +x /usr/local/bin/veln
+```
+
+### Using Just (Convenience)
+
+If you have [just](https://github.com/casey/just) installed:
+
+```bash
+# Install from source with tracking
+just install
+
+# Create and install package
+just pkg-install
+
+# Set up local repository
+just pkg-repo
+
+# Uninstall cleanly
+just uninstall
+
+# Check installation status
+just status
+```
+
+See [INSTALL.md](INSTALL.md) for detailed installation options and troubleshooting.
+
+---
 
 ## Quick Start
 
@@ -471,13 +562,32 @@ just qa
 
 ## Roadmap
 
-- [ ] VM snapshots (ZFS-based)
-- [ ] ISO/image management
-- [ ] VM cloning and templates
-- [ ] VNC console support
-- [ ] Cloud-init integration
-- [ ] REST API
-- [ ] Web UI
+### Completed ✓
+
+- [x] Core VM lifecycle (create, start, stop, destroy)
+- [x] ZFS storage integration with ZVOLs
+- [x] Dual network backends (TAP+Bridge, VALE)
+- [x] VM snapshots (ZFS-based)
+- [x] ISO/image management
+- [x] VM cloning and templates
+- [x] VNC console support
+- [x] Cloud-init integration
+- [x] REST API server
+- [x] Comprehensive installation system (packages, ports, source)
+- [x] Clean uninstall with manifest tracking
+
+### In Progress
+
+- [ ] FreeBSD Port submission
+- [ ] Binary packages (pkg install veln)
+
+### Future
+
+- [ ] Web UI for browser-based management
+- [ ] Integration tests (requires FreeBSD environment)
+- [ ] Live migration support
+- [ ] Distributed storage backends
+- [ ] Prometheus metrics export
 
 ## Contributing
 

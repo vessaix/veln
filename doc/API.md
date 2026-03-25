@@ -8,6 +8,43 @@ The Veln REST API provides HTTP endpoints for managing FreeBSD virtual machines 
 - **Content-Type**: `application/json`
 - **CORS**: Enabled for browser clients
 
+## Starting the API Server
+
+### Command Line
+
+```bash
+# Start with default settings (binds to 127.0.0.1:8080)
+veln api
+
+# Custom bind address and port
+veln api --bind 0.0.0.0 --port 8080
+
+# Background with logging
+veln api > /var/log/veln-api.log 2>&1 &
+```
+
+### Service (FreeBSD rc.d)
+
+If you installed veln with the RC script option:
+
+```bash
+# Enable at boot
+sysrc veln_enable="YES"
+
+# Start service
+service veln start
+
+# Check status
+service veln status
+```
+
+The service reads configuration from `/etc/rc.conf`:
+```bash
+veln_enable="YES"
+veln_bind="127.0.0.1"
+veln_port="8080"
+```
+
 ## Authentication
 
 Currently, the API does not implement authentication. It is designed to run on localhost or within trusted networks. For production use, place behind a reverse proxy with authentication (e.g., nginx with basic auth).
