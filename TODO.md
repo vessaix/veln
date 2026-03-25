@@ -175,6 +175,8 @@
 - [x] Add purge mode to remove all VM data
 - [x] Support for pkg install/remove workflow
 - [x] Create FreeBSD port files (Makefile, pkg-descr, distinfo)
+- [x] Add 'veln self uninstall' command (integrated uninstall)
+- [x] Replace veln-uninstall binary with veln self uninstall
 
 ## Future Phases
 - [ ] Web UI
