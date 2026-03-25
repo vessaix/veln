@@ -1,159 +1,379 @@
-# Veln Installation
+# Veln Installation Guide
 
-This directory contains multiple ways to install veln on FreeBSD.
+This guide covers all installation methods for veln on FreeBSD, from quick testing to production deployment.
 
-## Quick Install Options
-
-### Option 1: Install Script (Quickest)
-
-Install from GitHub source directly:
+## Quick Reference
 
 ```bash
-# Download and run install script
-curl -sSL https://raw.githubusercontent.com/vessaix/veln/main/install.sh | sh
+# Quickest: Try veln without installing
+./install.sh --package && pkg add ./packages/veln-*.pkg
 
-# Or with custom prefix
-curl -sSL https://raw.githubusercontent.com/vessaix/veln/main/install.sh | PREFIX=/opt/veln sh
-
-# Or clone and install
-git clone https://github.com/vessaix/veln.git
-cd veln
+# Recommended: Install from source with tracking
 ./install.sh
+
+# Production: Create local package repository
+./install.sh --local-repo
+
+# Then use pkg:
+pkg install veln
+pkg remove veln
 ```
 
-**Requirements:** Git, Cargo (Rust)
+---
 
-### Option 2: FreeBSD Port (Official)
+## Installation Methods
 
-Install as a proper FreeBSD port:
+### Method 1: Package Installation (Recommended for Testing)
+
+Create a FreeBSD package and install it. Easy to remove later.
 
 ```bash
-# Method A: From GitHub release (standard)
+# Create package
+./install.sh --package
+
+# Install it
+pkg add ./packages/veln-*.pkg
+
+# Later, uninstall cleanly:
+pkg remove veln
+```
+
+**Pros:** Clean uninstall via `pkg remove`, can redistribute the .pkg file  
+**Cons:** Must be rebuilt for updates
+
+### Method 2: Source Installation with Tracking (Recommended for Development)
+
+Install from source with full tracking for clean uninstall.
+
+```bash
+# Install with tracking
+./install.sh
+
+# Or with just:
+just install
+```
+
+This creates a manifest at `/usr/local/var/db/veln/manifest` that tracks every file installed.
+
+**Uninstall cleanly:**
+```bash
+# Using the installed uninstaller
+/usr/local/bin/veln-uninstall
+
+# Or with just:
+just uninstall
+
+# Dry run (see what would be removed without removing)
+just uninstall-dry
+
+# Purge everything including VMs and data
+just uninstall-purge
+```
+
+**Pros:** Clean uninstall, no package needed, tracks all files  
+**Cons:** Must use uninstall script (not pkg)
+
+### Method 3: Local Package Repository (Recommended for Multiple Systems)
+
+Create a local package repository that can be used with `pkg install`.
+
+```bash
+# Set up local repository
+./install.sh --local-repo
+
+# Or with just:
+just pkg-repo
+```
+
+Then configure pkg to use it:
+
+```bash
+# Create repo config
+sudo tee /usr/local/etc/pkg/repos/veln.conf << 'EOF'
+veln: {
+    url: "file:///usr/local/poudriere/veln-repo",
+    enabled: yes
+}
+EOF
+
+# Update and install
+sudo pkg update
+sudo pkg install veln
+
+# Later, uninstall normally:
+sudo pkg remove veln
+```
+
+**Pros:** Use standard pkg commands, easy updates, works across multiple systems  
+**Cons:** Initial setup required
+
+### Method 4: FreeBSD Port (Recommended for Production)
+
+Install as a proper FreeBSD port (requires ports tree).
+
+```bash
+# Copy port to ports tree
+cp -r port/sysutils/veln /usr/ports/sysutils/
+
+# Build and install
 cd /usr/ports/sysutils/veln
 make install clean
 
-# Method B: From local source (development)
-cd /usr/ports/sysutils/veln
-make LOCAL_SOURCE=on WRKSRC=/path/to/veln install clean
+# Or test from local source:
+make LOCAL_SOURCE=on WRKSRC=/path/to/veln install
 ```
 
-**Requirements:** FreeBSD ports tree
+**Pros:** Official FreeBSD integration, automatic updates via ports  
+**Cons:** Requires ports tree, slower to set up
 
-### Option 3: Binary Package (Future)
+### Method 5: Manual Build
 
-```bash
-# When available in FreeBSD packages
-pkg install veln
-```
-
-## Installation Methods Comparison
-
-| Method | Best For | Pros | Cons |
-|--------|----------|------|------|
-| `install.sh` | Quick testing | Fast, no ports tree needed | No automatic updates |
-| Port (GitHub) | Production | Standard FreeBSD package, updates | Needs ports tree |
-| Port (local) | Development | Build from local changes | Manual build process |
-| pkg (future) | Users | Easiest, automatic updates | Not yet available |
-
-## Build from Source Manually
+Build and install manually (experts only).
 
 ```bash
-# Clone repository
-git clone https://github.com/vessaix/veln.git
-cd veln
-
-# Build release
+# Build
 cargo build --release
 
 # Install manually
-cp target/release/veln /usr/local/bin/
+sudo cp target/release/veln /usr/local/bin/
+sudo chmod +x /usr/local/bin/veln
 ```
+
+**Note:** No automatic uninstall support with this method.
+
+---
+
+## Uninstallation
+
+### Clean Uninstall (Source Install)
+
+If you installed from source with the install script:
+
+```bash
+# Interactive uninstall
+sudo /usr/local/bin/veln-uninstall
+
+# Non-interactive (auto-yes)
+sudo /usr/local/bin/veln-uninstall --yes
+
+# Dry run (show what would be removed)
+sudo /usr/local/bin/veln-uninstall --dry-run
+
+# Or use just:
+just uninstall
+just uninstall-dry
+```
+
+### Package Uninstall
+
+If you installed via pkg:
+
+```bash
+pkg remove veln
+```
+
+### Purge All Data
+
+To remove veln AND all VMs, configs, and ZFS datasets:
+
+```bash
+# WARNING: This deletes everything!
+sudo /usr/local/bin/veln-uninstall --purge
+
+# Or with just:
+just uninstall-purge
+```
+
+**This will remove:**
+- veln binary and all installed files
+- Configuration files (`/usr/local/etc/veln.toml`)
+- ZFS datasets (pools/veln/*)
+- VM storage directories
+- RC scripts
+
+---
+
+## Installation Options
+
+### Install Script Options
+
+```bash
+./install.sh [OPTIONS]
+
+Options:
+  --prefix=PATH       Install prefix (default: /usr/local)
+  --package           Create a .pkg package instead of installing
+  --package-dir=DIR   Directory for created package (default: ./packages)
+  --local-repo        Create/update local package repository
+  --repo-dir=DIR      Local repo directory (default: /usr/local/poudriere/veln-repo)
+  --manifest=FILE     Save installation manifest for clean uninstall
+  --help              Show help
+```
+
+### Examples
+
+```bash
+# Install to custom location
+./install.sh --prefix=/opt/veln
+
+# Create package in specific directory
+./install.sh --package --package-dir=/tmp/packages
+
+# Set up repo in custom location
+./install.sh --local-repo --repo-dir=/var/packages/veln
+```
+
+---
+
+## Using Just (Recommended)
+
+If you have [just](https://github.com/casey/just) installed:
+
+```bash
+# Development
+just check          # Run tests and checks
+just test           # Run tests only
+just qa             # Full QA suite
+
+# Installation
+just install                    # Install from source
+just install-pkg                # Install and create package
+just package                    # Create package only
+just pkg-install                # Create and install package
+just pkg-repo                   # Set up local repository
+
+# Uninstallation
+just uninstall                  # Clean uninstall
+just uninstall-dry              # Dry run
+just uninstall-purge            # Remove everything
+just pkg-remove                 # Remove via pkg
+
+# Status
+just status                     # Show installation status
+just help                       # Show all targets
+```
+
+---
+
+## Requirements
+
+### Build Requirements
+- FreeBSD 13.0+ or 14.0+
+- Rust 1.70+ with Cargo
+- Git (for cloning)
+
+### Runtime Requirements
+- Root privileges (for VM operations)
+- ZFS filesystem
+- Kernel modules: `vmm`, `if_tuntap`, `nmdm`
+
+### Optional
+- `pkg` (for package management)
+- `just` (for convenience commands)
+
+---
+
+## Troubleshooting
+
+### Installation Fails
+
+```bash
+# Check dependencies
+which cargo
+which git
+
+# Check permissions
+ls -la /usr/local/bin/
+
+# Try with explicit prefix
+./install.sh --prefix=$HOME/.local
+```
+
+### Uninstall Fails
+
+```bash
+# Check if installed via pkg
+pkg info veln
+
+# If manifest is missing, manually remove:
+sudo rm /usr/local/bin/veln
+sudo rm /usr/local/etc/rc.d/veln
+sudo rm -rf /usr/local/var/db/veln
+```
+
+### Permission Denied
+
+```bash
+# Ensure you're root for install/uninstall
+sudo ./install.sh
+sudo /usr/local/bin/veln-uninstall
+```
+
+### Package Won't Install
+
+```bash
+# Check if already installed
+pkg info veln
+
+# Force reinstall
+pkg add -f ./packages/veln-*.pkg
+```
+
+---
+
+## Comparison Table
+
+| Method | Best For | Install | Uninstall | Updates |
+|--------|----------|---------|-----------|---------|
+| Package | Quick test | `pkg add` | `pkg remove` | Manual |
+| Source + Tracking | Development | `./install.sh` | `veln-uninstall` | Re-run install |
+| Local Repo | Multiple systems | `pkg install` | `pkg remove` | Update repo |
+| FreeBSD Port | Production | `make install` | `make deinstall` | Port upgrade |
+
+---
 
 ## Post-Installation
 
 ### Configure veln
 
-Create a configuration file:
-
 ```bash
-cat > /usr/local/etc/veln.toml << 'EOF'
+# Create config file
+sudo tee /usr/local/etc/veln.toml << 'EOF'
 zfs_pool = "zroot"
 vm_root = "/usr/local/vms"
 EOF
 ```
 
-### Enable API Server (Optional)
+### Enable API Server
 
 ```bash
-# For install.sh method
-cp rc.d/veln /usr/local/etc/rc.d/
-echo 'veln_enable="YES"' >> /etc/rc.conf
-service veln start
+# Enable at boot
+sudo sysrc veln_enable="YES"
 
-# For port method
-make install WITH=API
+# Start now
+sudo service veln start
+
+# Check status
+sudo service veln status
 ```
 
-### Verify Installation
+### First Run
 
 ```bash
-veln --version
-veln check
-veln list
+# Check system readiness
+sudo veln check
+
+# List VMs (empty initially)
+sudo veln list
+
+# Get help
+veln --help
 ```
 
-## Uninstall
+---
 
-```bash
-# install.sh method
-rm /usr/local/bin/veln
-rm /usr/local/etc/veln.toml  # if created
+## Support
 
-# port method
-cd /usr/ports/sysutils/veln && make deinstall
-
-# With API
-rm /usr/local/etc/rc.d/veln
-```
-
-## Troubleshooting
-
-### Missing Dependencies
-
-```bash
-# Install Rust (required for all source builds)
-pkg install rust
-
-# For port builds
-pkg install portmaster portlint
-```
-
-### Permission Issues
-
-```bash
-# Ensure binary is executable
-chmod +x /usr/local/bin/veln
-
-# Check ZFS permissions
-zpool list
-zfs list
-```
-
-## Contributing
-
-To contribute to veln:
-
-1. Fork the repository
-2. Make changes in your local copy
-3. Test with local source method:
-   ```bash
-   cd /usr/ports/sysutils/veln
-   make LOCAL_SOURCE=on WRKSRC=/path/to/your/fork install
-   ```
-4. Submit a pull request
-
-## See Also
-
-- [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/)
-- [Veln README](../README.md)
-- [Veln API Documentation](../doc/API.md)
+- **GitHub:** https://github.com/vessaix/veln
+- **Issues:** https://github.com/vessaix/veln/issues
+- **Documentation:** See `README.md` and `doc/` directory
