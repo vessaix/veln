@@ -188,11 +188,12 @@ install_files() {
         fi
     fi
     
-    # Install uninstall script
+    # Install uninstall script for use by 'veln self uninstall'
     if [ "$is_package" -eq 0 ]; then
         log_info "Installing uninstall script..."
-        install -m 755 scripts/uninstall.sh "${dest_prefix}/bin/veln-uninstall"
-        add_to_manifest "${dest_prefix}/bin/veln-uninstall" "bin"
+        mkdir -p "${dest_prefix}/share/veln"
+        install -m 755 scripts/uninstall.sh "${dest_prefix}/share/veln/uninstall.sh"
+        add_to_manifest "${dest_prefix}/share/veln/uninstall.sh" "bin"
     fi
 }
 
@@ -370,7 +371,7 @@ main() {
         log_info "Installation complete!"
         echo ""
         log_info "To uninstall cleanly:"
-        echo "  $PREFIX/bin/veln-uninstall"
+        echo "  veln self uninstall"
         echo ""
         log_info "Or manually:"
         echo "  cat $MANIFEST_FILE"

@@ -83,7 +83,7 @@ Best for development with full tracking and clean uninstall:
 
 This creates a manifest that tracks every installed file.
 
-**Uninstall:** `sudo /usr/local/bin/veln-uninstall` or `just uninstall`
+**Uninstall:** `sudo veln self uninstall` or `just uninstall`
 
 **Purge (remove everything including VMs):** `just uninstall-purge`
 

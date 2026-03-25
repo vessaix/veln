@@ -34,6 +34,10 @@ pub enum VelnError {
     #[error(transparent)]
     #[diagnostic(code(veln::io))]
     Io(#[from] std::io::Error),
+
+    #[error("{0}")]
+    #[diagnostic(code(veln::generic))]
+    Other(String),
 }
 
 pub type Result<T> = std::result::Result<T, VelnError>;

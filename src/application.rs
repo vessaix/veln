@@ -1,4 +1,4 @@
-use crate::cli::{Commands, IsoCommands, SnapshotCommands, TemplateCommands};
+use crate::cli::{Commands, IsoCommands, SelfCommands, SnapshotCommands, TemplateCommands};
 use crate::config::Config;
 use crate::domain::vm::{VirtualMachine, VmConfig, VmState};
 use crate::domain::{RequirementsChecker, ResourceMonitor, VmRepository, VmRuntime};
@@ -78,6 +78,11 @@ pub fn run(command: Commands) -> Result<()> {
             }
             TemplateCommands::Delete { name, yes } => {
                 cmd_template_delete(name, yes)?;
+            }
+        },
+        Commands::Self_ { command } => match command {
+            SelfCommands::Uninstall { yes, dry_run, purge, prefix } => {
+                cmd_self_uninstall(yes, dry_run, purge, prefix)?;
             }
         },
     }
@@ -839,5 +844,96 @@ fn require_root() -> Result<()> {
     if !is_root::is_root() {
         return Err(VelnError::RootRequired);
     }
+    Ok(())
+}
+
+fn cmd_self_uninstall(yes: bool, dry_run: bool, purge: bool, prefix: String) -> Result<()> {
+    println!("Veln Self-Uninstall");
+    println!("===================");
+    println!();
+
+    // Build uninstall command
+    let mut args = vec!["scripts/uninstall.sh".to_string()];
+    
+    if yes {
+        args.push("--yes".to_string());
+    }
+    
+    if dry_run {
+        args.push("--dry-run".to_string());
+    }
+    
+    if purge {
+        args.push("--purge".to_string());
+    }
+    
+    args.push(format!("--prefix={}", prefix));
+    
+    // Check if uninstall script exists
+    let share_script = format!("{}/share/veln/uninstall.sh", prefix);
+    let scripts_dir = format!("{}/scripts/uninstall.sh", std::env::current_dir()
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|_| ".".to_string()));
+    
+    let script_to_run = if std::path::Path::new(&share_script).exists() {
+        share_script
+    } else if std::path::Path::new(&scripts_dir).exists() {
+        scripts_dir
+    } else {
+        eprintln!("Error: Could not find uninstall script.");
+        eprintln!("Tried: {} and {}", share_script, scripts_dir);
+        eprintln!();
+        eprintln!("You can manually uninstall by:");
+        eprintln!("  1. If installed from source: ./scripts/uninstall.sh");
+        eprintln!("  2. If installed via pkg: pkg remove veln");
+        return Ok(());
+    };
+    
+    if dry_run {
+        println!("DRY RUN: Would execute: {} {}", script_to_run, args[1..].join(" "));
+        return Ok(());
+    }
+    
+    if !yes {
+        println!("This will uninstall veln from your system.");
+        if purge {
+            println!("WARNING: --purge will remove ALL DATA including VMs!");
+        }
+        println!();
+        print!("Are you sure? [y/N]: ");
+        use std::io::Write;
+        std::io::stdout().flush().map_err(|e| VelnError::Other(e.to_string()))?;
+        
+        let mut input = String::new();
+        std::io::stdin()
+            .read_line(&mut input)
+            .map_err(|e| VelnError::Other(e.to_string()))?;
+        
+        if !input.trim().eq_ignore_ascii_case("y") {
+            println!("Aborted.");
+            return Ok(());
+        }
+        println!();
+    }
+    
+    println!("Running uninstall script: {}", script_to_run);
+    
+    // Execute uninstall script
+    let status = std::process::Command::new("sh")
+        .arg(&script_to_run)
+        .args(&args[1..])
+        .status()
+        .map_err(|e| VelnError::Other(format!("Failed to run uninstall script: {}", e)))?;
+    
+    if status.success() {
+        println!();
+        println!("Uninstall completed successfully!");
+        if !dry_run {
+            println!("Veln has been removed from your system.");
+        }
+    } else {
+        return Err(VelnError::Other("Uninstall script failed".to_string()));
+    }
+    
     Ok(())
 }
