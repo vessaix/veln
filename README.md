@@ -45,7 +45,7 @@ Veln is a FreeBSD-native virtualization management tool built in Rust. It provid
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/veln.git
+git clone https://github.com/vessaix/veln.git
 cd veln
 
 # Build release binary
@@ -507,7 +507,7 @@ BSD-3-Clause License - See [LICENSE](LICENSE) file for details.
 
 ## Support
 
-- Report issues: [GitHub Issues](https://github.com/yourusername/veln/issues)
+- Report issues: [GitHub Issues](https://github.com/vessaix/veln/issues)
 - FreeBSD Forums: [forums.freebsd.org](https://forums.freebsd.org/)
 - Documentation: See `doc/` directory
 
