@@ -73,14 +73,14 @@ fi
 # Run install.sh with appropriate flags
 if [ "$INSTALL" -eq 1 ]; then
     echo "Creating and installing package..."
-    ./install.sh --package --package-dir=./packages
+    ./scripts/install.sh --package --package-dir=./packages
 elif [ "$REPO" -eq 1 ]; then
     echo "Creating package and adding to local repository..."
-    ./install.sh --package --package-dir=./packages
-    ./install.sh --local-repo --repo-dir=/usr/local/poudriere/veln-repo
+    ./scripts/install.sh --package --package-dir=./packages
+    ./scripts/install.sh --local-repo --repo-dir=/usr/local/poudriere/veln-repo
 else
     echo "Creating package..."
-    ./install.sh --package --package-dir=./packages
+    ./scripts/install.sh --package --package-dir=./packages
     
     # Show the created package
     echo ""

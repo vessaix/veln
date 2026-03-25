@@ -51,7 +51,7 @@ Create a FreeBSD package and install with one command:
 # Clone and create package
 git clone https://github.com/vessaix/veln.git
 cd veln
-./install.sh --package
+./scripts/install.sh --package
 
 # Install it
 sudo pkg add ./packages/veln-*.pkg
@@ -67,7 +67,7 @@ veln --version
 Best for users who want easy installation and clean uninstallation:
 
 ```bash
-./install.sh --package
+./scripts/install.sh --package
 sudo pkg add ./packages/veln-*.pkg
 ```
 
@@ -78,7 +78,7 @@ sudo pkg add ./packages/veln-*.pkg
 Best for development with full tracking and clean uninstall:
 
 ```bash
-./install.sh
+./scripts/install.sh
 ```
 
 This creates a manifest that tracks every installed file.
@@ -93,7 +93,7 @@ Best for managing veln with `pkg install/remove` without official ports:
 
 ```bash
 # Set up local repository
-./install.sh --local-repo
+./scripts/install.sh --local-repo
 
 # Configure pkg
 echo 'veln: { url: "file:///usr/local/poudriere/veln-repo", enabled: yes }' | sudo tee /usr/local/etc/pkg/repos/veln.conf

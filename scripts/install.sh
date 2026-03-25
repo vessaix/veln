@@ -2,7 +2,7 @@
 #
 # Veln Installation Script
 # Supports: source install, package creation, and local package repo
-# Usage: ./install.sh [OPTIONS]
+# Usage: ./scripts/install.sh [OPTIONS]
 #
 # Options:
 #   --prefix=PATH       Install prefix (default: /usr/local)

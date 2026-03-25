@@ -6,13 +6,13 @@ This guide covers all installation methods for veln on FreeBSD, from quick testi
 
 ```bash
 # Quickest: Try veln without installing
-./install.sh --package && pkg add ./packages/veln-*.pkg
+./scripts/install.sh --package && pkg add ./packages/veln-*.pkg
 
 # Recommended: Install from source with tracking
-./install.sh
+./scripts/install.sh
 
 # Production: Create local package repository
-./install.sh --local-repo
+./scripts/install.sh --local-repo
 
 # Then use pkg:
 pkg install veln
@@ -29,7 +29,7 @@ Create a FreeBSD package and install it. Easy to remove later.
 
 ```bash
 # Create package
-./install.sh --package
+./scripts/install.sh --package
 
 # Install it
 pkg add ./packages/veln-*.pkg
@@ -47,7 +47,7 @@ Install from source with full tracking for clean uninstall.
 
 ```bash
 # Install with tracking
-./install.sh
+./scripts/install.sh
 
 # Or with just:
 just install
@@ -79,7 +79,7 @@ Create a local package repository that can be used with `pkg install`.
 
 ```bash
 # Set up local repository
-./install.sh --local-repo
+./scripts/install.sh --local-repo
 
 # Or with just:
 just pkg-repo
@@ -198,7 +198,7 @@ just uninstall-purge
 ### Install Script Options
 
 ```bash
-./install.sh [OPTIONS]
+./scripts/install.sh [OPTIONS]
 
 Options:
   --prefix=PATH       Install prefix (default: /usr/local)
@@ -214,13 +214,13 @@ Options:
 
 ```bash
 # Install to custom location
-./install.sh --prefix=/opt/veln
+./scripts/install.sh --prefix=/opt/veln
 
 # Create package in specific directory
-./install.sh --package --package-dir=/tmp/packages
+./scripts/install.sh --package --package-dir=/tmp/packages
 
 # Set up repo in custom location
-./install.sh --local-repo --repo-dir=/var/packages/veln
+./scripts/install.sh --local-repo --repo-dir=/var/packages/veln
 ```
 
 ---
@@ -286,7 +286,7 @@ which git
 ls -la /usr/local/bin/
 
 # Try with explicit prefix
-./install.sh --prefix=$HOME/.local
+./scripts/install.sh --prefix=$HOME/.local
 ```
 
 ### Uninstall Fails
@@ -305,7 +305,7 @@ sudo rm -rf /usr/local/var/db/veln
 
 ```bash
 # Ensure you're root for install/uninstall
-sudo ./install.sh
+sudo ./scripts/install.sh
 sudo /usr/local/bin/veln-uninstall
 ```
 
@@ -326,7 +326,7 @@ pkg add -f ./packages/veln-*.pkg
 | Method | Best For | Install | Uninstall | Updates |
 |--------|----------|---------|-----------|---------|
 | Package | Quick test | `pkg add` | `pkg remove` | Manual |
-| Source + Tracking | Development | `./install.sh` | `veln-uninstall` | Re-run install |
+| Source + Tracking | Development | `./scripts/install.sh` | `veln-uninstall` | Re-run install |
 | Local Repo | Multiple systems | `pkg install` | `pkg remove` | Update repo |
 | FreeBSD Port | Production | `make install` | `make deinstall` | Port upgrade |
 

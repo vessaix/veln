@@ -2,7 +2,7 @@
 #
 # Veln Uninstall Script
 # Removes all veln components cleanly
-# Usage: ./uninstall.sh [OPTIONS]
+# Usage: ./scripts/uninstall.sh [OPTIONS]
 #
 # Options:
 #   --prefix=PATH       Installation prefix (default: /usr/local)

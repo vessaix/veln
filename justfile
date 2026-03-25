@@ -26,17 +26,17 @@ audit:
 # Install veln from source with full tracking (recommended)
 install prefix="/usr/local":
     @echo "Installing veln from source..."
-    ./install.sh --prefix={{prefix}}
+    ./scripts/install.sh --prefix={{prefix}}
 
 # Install and create package
 install-pkg prefix="/usr/local":
     @echo "Installing veln and creating package..."
-    ./install.sh --prefix={{prefix}} --package
+    ./scripts/install.sh --prefix={{prefix}} --package
 
 # Create package only (don't install)
 package:
     @echo "Creating FreeBSD package..."
-    ./install.sh --package --package-dir=./packages
+    ./scripts/install.sh --package --package-dir=./packages
     @echo ""
     @echo "Package created in: ./packages/"
     @ls -lh ./packages/*.pkg 2>/dev/null || true
@@ -44,13 +44,13 @@ package:
 # Create and install package
 pkg-install:
     @echo "Creating and installing package..."
-    ./install.sh --package --package-dir=./packages
+    ./scripts/install.sh --package --package-dir=./packages
     @pkg add ./packages/veln-*.pkg
 
 # Create local package repository
 pkg-repo:
     @echo "Setting up local package repository..."
-    ./install.sh --local-repo --repo-dir=/usr/local/poudriere/veln-repo
+    ./scripts/install.sh --local-repo --repo-dir=/usr/local/poudriere/veln-repo
     @echo ""
     @echo "Add to /usr/local/etc/pkg/repos/veln.conf:"
     @echo 'veln: {'
