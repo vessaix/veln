@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, provide } from 'vue'
+import Sidebar from './components/Sidebar.vue'
+import TopNav from './components/TopNav.vue'
 import VMList from './components/VMList.vue'
 import VMDetail from './components/VMDetail.vue'
 import SystemStats from './components/SystemStats.vue'
+import ActionTiles from './components/ActionTiles.vue'
+import ActivityLog from './components/ActivityLog.vue'
 import LoginPage from './components/LoginPage.vue'
 import type { VM, SystemInfo } from './types'
 
@@ -17,6 +21,7 @@ const systemInfo = ref<SystemInfo | null>(null)
 const loading = ref(true)
 const error = ref('')
 const refreshInterval = ref<number | null>(null)
+const activeTab = ref('dashboard')
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
@@ -27,7 +32,6 @@ provide('isAuthenticated', isAuthenticated)
 function handleLogin(key: string) {
   apiKey.value = key
   isAuthenticated.value = true
-  // Start fetching data
   refreshData()
   refreshInterval.value = window.setInterval(refreshData, 5000)
 }
@@ -47,9 +51,7 @@ function handleLogout() {
 async function fetchVMs() {
   try {
     const response = await fetch(`${API_BASE}/vms`, {
-      headers: {
-        'Authorization': `Bearer ${apiKey.value}`
-      }
+      headers: { 'Authorization': `Bearer ${apiKey.value}` }
     })
     if (!response.ok) {
       if (response.status === 401) {
@@ -63,16 +65,13 @@ async function fetchVMs() {
     error.value = ''
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Unknown error'
-    console.error('Error fetching VMs:', err)
   }
 }
 
 async function fetchSystemInfo() {
   try {
     const response = await fetch(`${API_BASE}/info`, {
-      headers: {
-        'Authorization': `Bearer ${apiKey.value}`
-      }
+      headers: { 'Authorization': `Bearer ${apiKey.value}` }
     })
     if (!response.ok) {
       if (response.status === 401) {
@@ -97,9 +96,7 @@ async function handleVMAction(vmName: string, action: 'start' | 'stop' | 'destro
   try {
     const response = await fetch(`${API_BASE}/vms/${vmName}/${action}`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey.value}`
-      }
+      headers: { 'Authorization': `Bearer ${apiKey.value}` }
     })
     if (!response.ok) {
       if (response.status === 401) {
@@ -123,90 +120,101 @@ function closeDetail() {
   selectedVM.value = null
 }
 
-onMounted(() => {
-  // Don't auto-start, wait for login
-})
-
 onUnmounted(() => {
-  if (refreshInterval.value) {
-    clearInterval(refreshInterval.value)
-  }
+  if (refreshInterval.value) clearInterval(refreshInterval.value)
 })
 </script>
 
 <template>
-  <!-- Show Login Page when not authenticated -->
   <LoginPage v-if="!isAuthenticated" @login="handleLogin" />
   
-  <!-- Show Dashboard when authenticated -->
-  <div v-else class="min-h-screen bg-[#0f1419] text-[#dee3e9] font-sans">
-    <!-- Top Navigation -->
-    <header class="sticky top-0 z-50 bg-[#0f1419]/95 backdrop-blur-xl border-b border-[#424753]/20">
-      <div class="flex items-center justify-between px-6 py-4 max-w-screen-2xl mx-auto">
-        <div class="flex items-center gap-3">
-          <span class="text-[#adc6ff] text-2xl">⚡</span>
-          <span class="font-black tracking-tighter uppercase text-xl text-[#adc6ff]">VELN</span>
-          <span class="text-[10px] uppercase tracking-widest text-[#8c909f] ml-2">Web Console</span>
+  <div v-else class="min-h-screen bg-[#0f1419] text-[#dee3e9] flex">
+    <!-- Sidebar -->
+    <Sidebar 
+      :active-tab="activeTab" 
+      @change-tab="activeTab = $event"
+      :system-info="systemInfo"
+    />
+    
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col md:ml-64">
+      <!-- Top Navigation -->
+      <TopNav 
+        :system-info="systemInfo" 
+        :loading="loading"
+        @refresh="refreshData"
+        @logout="handleLogout"
+      />
+      
+      <!-- Main Content -->
+      <main class="flex-1 p-6 md:p-10 pb-24 md:pb-10">
+        <!-- Error Alert -->
+        <div v-if="error" class="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-sm font-mono">
+          {{ error }}
         </div>
-        <div class="flex items-center gap-4">
-          <div v-if="systemInfo" class="hidden md:flex items-center gap-4 text-xs font-mono">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span class="text-[#8c909f]">{{ systemInfo.pool }}</span>
+
+        <!-- Hero Header -->
+        <section class="mb-12">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div class="max-w-2xl">
+              <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-[#adc6ff] block mb-2">Aggregate Metrics</span>
+              <h1 class="font-black text-5xl md:text-7xl tracking-tighter text-[#dee3e9] leading-none">
+                Operational <span class="text-[#0969da]">Pulse</span>
+              </h1>
+            </div>
+            <button class="bg-gradient-to-r from-[#adc6ff] to-[#0969da] text-[#002e68] px-8 py-3 rounded-sm font-bold text-sm tracking-widest flex items-center gap-2 active:scale-[0.98] transition-all uppercase">
+              <span>+</span>
+              New VM Instance
+            </button>
+          </div>
+        </section>
+
+        <!-- Stats Overview -->
+        <SystemStats v-if="systemInfo" :info="systemInfo" class="mb-12" />
+
+        <!-- Bento Grid Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <!-- VM List -->
+          <div class="md:col-span-8">
+            <VMList 
+              :vms="vms" 
+              :loading="loading"
+              @select="selectVM"
+              @action="handleVMAction"
+            />
+          </div>
+          
+          <!-- Right Panel -->
+          <div class="md:col-span-4 space-y-6">
+            <!-- VM Detail or Host Stats -->
+            <VMDetail 
+              v-if="selectedVM" 
+              :vm="selectedVM" 
+              @close="closeDetail"
+              @action="handleVMAction"
+            />
+            <div v-else class="bg-[#171c21] p-8 border border-[#424753]/10">
+              <h3 class="font-bold text-xl text-[#dee3e9] mb-4">Quick Console</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <button class="bg-[#30353a] p-3 font-mono text-[9px] uppercase hover:bg-[#0969da] hover:text-white transition-all rounded-sm">
+                  Serial COM1
+                </button>
+                <button class="bg-[#30353a] p-3 font-mono text-[9px] uppercase hover:bg-[#0969da] hover:text-white transition-all rounded-sm">
+                  VNC Display
+                </button>
+              </div>
             </div>
           </div>
-          <button 
-            @click="refreshData"
-            class="p-2 rounded hover:bg-[#1b2025] transition-colors"
-            :class="{ 'animate-spin': loading }"
-          >
-            <span class="text-[#adc6ff]">↻</span>
-          </button>
-          <button 
-            @click="handleLogout"
-            class="px-3 py-1.5 text-xs font-bold text-[#8c909f] hover:text-red-400 transition-colors"
-          >
-            LOGOUT
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="p-6 max-w-screen-2xl mx-auto">
-      <!-- Error Alert -->
-      <div v-if="error" class="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-sm">
-        {{ error }}
-      </div>
-
-      <!-- System Stats -->
-      <SystemStats v-if="systemInfo" :info="systemInfo" class="mb-6" />
-
-      <!-- VM List -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2">
-          <VMList 
-            :vms="vms" 
-            :loading="loading"
-            @select="selectVM"
-            @action="handleVMAction"
-          />
-        </div>
-        
-        <!-- VM Detail Panel -->
-        <div class="lg:col-span-1">
-          <VMDetail 
-            v-if="selectedVM" 
-            :vm="selectedVM" 
-            @close="closeDetail"
-            @action="handleVMAction"
-          />
-          <div v-else class="bg-[#171c21] rounded-lg p-8 text-center border border-[#424753]/20">
-            <span class="text-4xl mb-4 block">📊</span>
-            <p class="text-[#8c909f] text-sm">Select a VM to view details</p>
+          
+          <!-- Activity Log -->
+          <div class="md:col-span-12">
+            <ActivityLog />
           </div>
         </div>
-      </div>
-    </main>
+
+        <!-- Action Tiles -->
+        <ActionTiles class="mt-12" />
+      </main>
+    </div>
   </div>
 </template>

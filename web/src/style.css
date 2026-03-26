@@ -1,1 +1,43 @@
 @import "tailwindcss";
+
+/* Material Symbols Outlined */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* Custom scrollbar hiding */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Selection styling */
+::selection {
+  background-color: rgba(173, 198, 255, 0.3);
+  color: #dee3e9;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus outline styling */
+:focus-visible {
+  outline: 2px solid #adc6ff;
+  outline-offset: 2px;
+}
+
+/* Input autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #dee3e9;
+  -webkit-box-shadow: 0 0 0px 1000px #171c21 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}

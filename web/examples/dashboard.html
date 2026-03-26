@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VELN | BHYVE_CONSOLE_V1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Space+Grotesk:wght@300;400;500;600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-primary": "#005bc0",
+              "tertiary-fixed-dim": "#d0bcff",
+              "tertiary-fixed": "#e9ddff",
+              "on-error": "#690005",
+              "inverse-surface": "#dee3e9",
+              "surface-bright": "#353a3f",
+              "surface-container-low": "#171c21",
+              "outline": "#8c909f",
+              "inverse-on-surface": "#2c3136",
+              "on-background": "#dee3e9",
+              "tertiary-container": "#7c4ce6",
+              "tertiary": "#d0bcff",
+              "on-secondary": "#29313a",
+              "secondary-fixed": "#dae3ef",
+              "surface-tint": "#adc6ff",
+              "surface-container": "#1b2025",
+              "secondary": "#bec7d2",
+              "primary-container": "#0969da",
+              "error": "#ffb4ab",
+              "on-tertiary-fixed-variant": "#5516be",
+              "on-primary": "#002e68",
+              "background": "#0f1419",
+              "outline-variant": "#424753",
+              "primary-fixed-dim": "#adc6ff",
+              "surface-variant": "#30353a",
+              "on-surface": "#dee3e9",
+              "on-secondary-fixed-variant": "#3f4851",
+              "surface-container-highest": "#30353a",
+              "primary": "#adc6ff",
+              "secondary-fixed-dim": "#bec7d2",
+              "on-tertiary-fixed": "#23005c",
+              "on-secondary-container": "#b0b9c4",
+              "secondary-container": "#414a53",
+              "surface-container-high": "#252a30",
+              "on-error-container": "#ffdad6",
+              "surface": "#0f1419",
+              "on-primary-fixed": "#001a41",
+              "on-primary-container": "#ecefff",
+              "on-tertiary-container": "#f5ecff",
+              "on-primary-fixed-variant": "#004493",
+              "surface-container-lowest": "#0a0f13",
+              "on-secondary-fixed": "#141c25",
+              "error-container": "#93000a",
+              "primary-fixed": "#d8e2ff",
+              "on-tertiary": "#3c0091",
+              "on-surface-variant": "#c2c6d6"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #0f1419;
+            color: #dee3e9;
+            font-family: 'Inter', sans-serif;
+        }
+        .kinetic-gradient {
+            background: linear-gradient(135deg, #adc6ff 0%, #0969da 100%);
+        }
+        .glass-panel {
+            background: rgba(48, 53, 58, 0.4);
+            backdrop-filter: blur(16px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="dark overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="flex items-center justify-between px-6 py-4 w-full sticky top-0 z-50 bg-[#0f1419] bg-opacity-80 backdrop-blur-xl">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#0969DA]" data-icon="terminal">terminal</span>
+<span class="font-black tracking-tighter text-[#0969DA] text-xl">VELN</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8 items-center">
+<span class="font-bold text-[#adc6ff]">Hypervisor</span>
+<span class="font-mono text-[11px] uppercase tracking-widest text-slate-500 hover:text-slate-300 cursor-pointer transition-colors">Virtual Machines</span>
+<span class="font-mono text-[11px] uppercase tracking-widest text-slate-500 hover:text-slate-300 cursor-pointer transition-colors">Storage Pools</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-[10px] font-bold overflow-hidden">
+<img alt="Developer Profile" data-alt="close up of a professional developer avatar with a clean tech aesthetic background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDxxS6dN-6qCLEcJbDpJO8qajrWStS-krrHTj4kxVv1A5WhA5nRP0WBSNNE4Xm7_6UKeIoFqe_jSb-EFa7pC6Xxrm5j4jI_5T7UMw7o0ev6T6CNY2CQjzH2eoI94qTh1sMXY2A3bdF7ezPh4XvoIb1B2b502Cts8nM8Ep0H5y3uhqkh3_6-BfbsoNYdrDVXh4fkYV75oaxwowGX-5iN_QkmyAz1feWtxmaVDZIGJioBpTTmwye9HERlhy9mjHt9GAFeNS2Wje3Yqef"/>
+</div>
+</div>
+</header>
+<div class="flex">
+<!-- NavigationDrawer -->
+<aside class="fixed left-0 top-0 h-full flex flex-col pt-20 bg-[#0f1419] w-64 border-r-0 z-40 hidden md:flex">
+<div class="px-6 mb-8">
+<h2 class="font-mono text-[11px] uppercase tracking-widest text-[#0969DA] opacity-70">BHYVE_SERVER_01</h2>
+</div>
+<nav class="flex flex-col">
+<div class="text-[#adc6ff] bg-[#1b2025] border-r-2 border-[#0969DA] py-3 px-6 flex items-center gap-3 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-mono text-[11px] uppercase tracking-widest">Dashboard</span>
+</div>
+<div class="text-slate-500 py-3 px-6 hover:text-slate-300 hover:bg-[#171c21] transition-all duration-150 flex items-center gap-3 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="computer">computer</span>
+<span class="font-mono text-[11px] uppercase tracking-widest">Virtual Machines</span>
+</div>
+<div class="text-slate-500 py-3 px-6 hover:text-slate-300 hover:bg-[#171c21] transition-all duration-150 flex items-center gap-3 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-mono text-[11px] uppercase tracking-widest">Storage &amp; ZFS</span>
+</div>
+<div class="text-slate-500 py-3 px-6 hover:text-slate-300 hover:bg-[#171c21] transition-all duration-150 flex items-center gap-3 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="lan">lan</span>
+<span class="font-mono text-[11px] uppercase tracking-widest">Networking</span>
+</div>
+<div class="text-slate-500 py-3 px-6 hover:text-slate-300 hover:bg-[#171c21] transition-all duration-150 flex items-center gap-3 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-mono text-[11px] uppercase tracking-widest">Hypervisor Config</span>
+</div>
+</nav>
+<div class="mt-auto p-6">
+<!-- Host System Section (Integrated into Sidebar) -->
+<div class="bg-surface-container-low p-4 rounded-sm border-l-2 border-primary">
+<p class="text-[10px] font-mono text-primary mb-1 uppercase tracking-widest">FreeBSD Host Status</p>
+<div class="space-y-2 mt-2">
+<div class="flex justify-between items-center text-[10px] font-mono">
+<span class="text-outline">UPTIME</span>
+<span class="text-on-surface">14d 2h 11m</span>
+</div>
+<div class="flex justify-between items-center text-[10px] font-mono">
+<span class="text-outline">LOAD</span>
+<span class="text-on-surface">0.45 0.38 0.41</span>
+</div>
+<div class="flex justify-between items-center text-[10px] font-mono">
+<span class="text-outline">ZFS POOL</span>
+<span class="text-green-400">ONLINE</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 p-6 md:p-10 pb-24 md:pb-10">
+<!-- Hero Header Section -->
+<section class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<span class="font-mono text-[10px] uppercase tracking-[0.3em] text-primary block mb-2">Aggregate Metrics</span>
+<h1 class="font-headline font-extrabold text-5xl md:text-7xl tracking-tighter text-on-background leading-none">
+                            Operational <span class="text-primary-container">Pulse</span>
+</h1>
+</div>
+<button class="kinetic-gradient text-on-primary px-8 py-3 rounded-sm font-label font-bold text-sm tracking-widest flex items-center gap-2 scale-98 active:opacity-80 transition-all uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="add" style="font-variation-settings: 'FILL' 1;">add</span>
+                        New VM Instance
+                    </button>
+</div>
+</section>
+<!-- Stats Overview (Updated Operational Pulse) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="bg-surface-container-low p-6 border-b-2 border-primary">
+<p class="font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Total vCPUs Allocated</p>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-black text-on-surface">24</span>
+<span class="text-xs text-outline font-mono">/ 32 CORES</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest mt-4">
+<div class="bg-primary h-full w-[75%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 border-b-2 border-tertiary">
+<p class="font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Guest Memory Usage</p>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-black text-on-surface">48.2</span>
+<span class="text-xs text-outline font-mono">GB / 64GB</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest mt-4">
+<div class="bg-tertiary h-full w-[75.3%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 border-b-2 border-primary-container">
+<p class="font-mono text-[10px] text-outline uppercase tracking-widest mb-2">Total Storage (ZFS)</p>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-black text-on-surface">1.4</span>
+<span class="text-xs text-outline font-mono">TB / 4.0TB</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest mt-4">
+<div class="bg-primary-container h-full w-[35%]"></div>
+</div>
+</div>
+</div>
+<!-- Bento Grid Dashboard -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Virtual Machines List (Bento Tall/Wide) -->
+<div class="md:col-span-8 bg-surface-container-low p-8 border border-outline-variant/10">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline font-bold text-xl text-on-surface">Virtual Machines</h3>
+<div class="flex gap-4">
+<span class="font-mono text-[10px] text-primary">8 RUNNING</span>
+<span class="font-mono text-[10px] text-outline">2 STOPPED</span>
+</div>
+</div>
+<div class="space-y-4">
+<!-- VM Entry 1 -->
+<div class="bg-surface-container p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-2 border-green-500">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="terminal">terminal</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">web-frontend-01</h4>
+<p class="font-mono text-[9px] text-outline uppercase">FREEBSD 14.0-RELEASE • 4 vCPUs • 8GB RAM</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="font-mono text-[10px] text-green-500 uppercase">Running</span>
+</div>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container-highest hover:bg-error transition-colors group">
+<span class="material-symbols-outlined text-xs group-hover:text-white" data-icon="stop">stop</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container-highest hover:bg-primary-container transition-colors group">
+<span class="material-symbols-outlined text-xs group-hover:text-white" data-icon="keyboard">keyboard</span>
+</button>
+</div>
+</div>
+</div>
+<!-- VM Entry 2 -->
+<div class="bg-surface-container p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-2 border-blue-500">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="desktop_windows">desktop_windows</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">win-ads-primary</h4>
+<p class="font-mono text-[9px] text-outline uppercase">WINDOWS SERVER 2022 • 8 vCPUs • 16GB RAM</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span>
+<span class="font-mono text-[10px] text-blue-500 uppercase">Paused</span>
+</div>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container-highest hover:bg-green-500 transition-colors group">
+<span class="material-symbols-outlined text-xs group-hover:text-white" data-icon="play_arrow">play_arrow</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container-highest hover:bg-primary-container transition-colors group">
+<span class="material-symbols-outlined text-xs group-hover:text-white" data-icon="keyboard">keyboard</span>
+</button>
+</div>
+</div>
+</div>
+<!-- VM Entry 3 -->
+<div class="bg-surface-container p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-2 border-slate-700">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="database">database</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">db-prod-cluster-b</h4>
+<p class="font-mono text-[9px] text-outline uppercase">DEBIAN LINUX 12 • 4 vCPUs • 12GB RAM</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-slate-500"></span>
+<span class="font-mono text-[10px] text-slate-500 uppercase">Stopped</span>
+</div>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container-highest hover:bg-green-500 transition-colors group">
+<span class="material-symbols-outlined text-xs group-hover:text-white" data-icon="play_arrow">play_arrow</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container-highest hover:bg-primary-container transition-colors group">
+<span class="material-symbols-outlined text-xs group-hover:text-white" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Host System Sidebar (Bento Small) -->
+<div class="md:col-span-4 space-y-6">
+<div class="bg-surface-container p-8 border-l-4 border-primary-container">
+<div class="mb-8">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="dns">dns</span>
+<h3 class="font-headline font-bold text-xl text-on-surface">Host Integrity</h3>
+<p class="font-mono text-[10px] text-outline uppercase tracking-wider">FreeBSD 15.0-CURRENT</p>
+</div>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between font-mono text-[10px] mb-2">
+<span>HOST CPU LOAD</span>
+<span class="text-primary">12%</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest">
+<div class="bg-primary h-full w-[12%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-mono text-[10px] mb-2">
+<span>ARC CACHE SIZE</span>
+<span class="text-primary">8.2 GB</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest">
+<div class="bg-primary h-full w-[51%]"></div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/20">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-xs text-green-500" data-icon="check_circle">check_circle</span>
+<span class="font-mono text-[9px] uppercase">Kernel modules OK</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-xs text-green-500" data-icon="check_circle">check_circle</span>
+<span class="font-mono text-[9px] uppercase">Hyperthreading Active</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-8 border border-outline-variant/10">
+<h3 class="font-headline font-bold text-sm text-on-surface mb-4">Quick Console Access</h3>
+<div class="grid grid-cols-2 gap-2">
+<button class="bg-surface-container-highest p-3 font-mono text-[9px] uppercase hover:bg-primary-container hover:text-white transition-all">Serial COM1</button>
+<button class="bg-surface-container-highest p-3 font-mono text-[9px] uppercase hover:bg-primary-container hover:text-white transition-all">VNC Display</button>
+</div>
+</div>
+</div>
+<!-- Activity Log (Bento Wide) -->
+<div class="md:col-span-12 bg-surface-container-lowest p-8 border border-outline-variant/10">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline font-bold text-xl text-on-surface">Hypervisor Logs</h3>
+<span class="font-mono text-[10px] text-outline">FILTER: /VAR/LOG/VM.LOG</span>
+</div>
+<div class="space-y-3 font-mono text-[11px] h-32 overflow-y-auto no-scrollbar">
+<div class="flex gap-4 opacity-80">
+<span class="text-outline">16:45:01</span>
+<span class="text-primary">[BHYVE]</span>
+<span>VM 'web-frontend-01' started on tap0.</span>
+</div>
+<div class="flex gap-4 opacity-80">
+<span class="text-outline">16:42:15</span>
+<span class="text-tertiary">[ZFS]</span>
+<span>Snapshot created: tank/vms/win-ads-primary@daily_backup</span>
+</div>
+<div class="flex gap-4 opacity-80">
+<span class="text-outline">16:30:10</span>
+<span class="text-primary">[INFO]</span>
+<span>PCI passthrough initialized for device 0:2:0.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Kinetic Action Tiles -->
+<section class="mt-12">
+<h3 class="font-mono text-[10px] uppercase tracking-[0.3em] text-primary mb-6">Management Tools</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container p-6 flex flex-col items-start gap-4 hover:bg-primary-container transition-all group cursor-pointer">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="auto_awesome_motion">auto_awesome_motion</span>
+<span class="font-mono text-[11px] uppercase font-bold group-hover:text-white">Clone VM</span>
+</div>
+<div class="bg-surface-container p-6 flex flex-col items-start gap-4 hover:bg-primary-container transition-all group cursor-pointer">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="camera">camera</span>
+<span class="font-mono text-[11px] uppercase font-bold group-hover:text-white">Snapshot</span>
+</div>
+<div class="bg-surface-container p-6 flex flex-col items-start gap-4 hover:bg-primary-container transition-all group cursor-pointer">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="monitor_heart">monitor_heart</span>
+<span class="font-mono text-[11px] uppercase font-bold group-hover:text-white">Top / Iostat</span>
+</div>
+<div class="bg-surface-container p-6 flex flex-col items-start gap-4 hover:bg-primary-container transition-all group cursor-pointer">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="terminal">terminal</span>
+<span class="font-mono text-[11px] uppercase font-bold group-hover:text-white">Host Shell</span>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- BottomNavBar for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-[#0f1419] bg-opacity-95 backdrop-blur-xl flex justify-around items-center py-4 z-50 border-t border-outline-variant/10">
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-mono text-[9px] uppercase tracking-tighter">Dash</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined" data-icon="computer">computer</span>
+<span class="font-mono text-[9px] uppercase tracking-tighter">VMs</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+<span class="font-mono text-[9px] uppercase tracking-tighter">Host</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-mono text-[9px] uppercase tracking-tighter">Set</span>
+</div>
+</nav>
+</body></html>

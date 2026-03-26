@@ -14,8 +14,18 @@ const emit = defineEmits<{
 function getStateColor(state: string): string {
   switch (state) {
     case 'running': return 'bg-green-500'
-    case 'stopped': return 'bg-[#8c909f]'
+    case 'stopped': return 'bg-slate-500'
+    case 'paused': return 'bg-blue-500'
     default: return 'bg-yellow-500'
+  }
+}
+
+function getStateBorderColor(state: string): string {
+  switch (state) {
+    case 'running': return 'border-green-500'
+    case 'stopped': return 'border-slate-500'
+    case 'paused': return 'border-blue-500'
+    default: return 'border-yellow-500'
   }
 }
 
@@ -25,97 +35,84 @@ function formatMemory(mb: number): string {
   }
   return `${mb} MB`
 }
+
+const runningCount = (vms: VM[]) => vms.filter(v => v.state === 'running').length
+const stoppedCount = (vms: VM[]) => vms.filter(v => v.state === 'stopped').length
 </script>
 
 <template>
-  <div class="bg-[#171c21] rounded-lg border border-[#424753]/20 overflow-hidden">
-    <!-- Header -->
-    <div class="px-6 py-4 border-b border-[#424753]/20 flex items-center justify-between">
-      <h2 class="font-black tracking-tight text-lg">Virtual Machines</h2>
-      <div class="flex items-center gap-2 text-xs text-[#8c909f]">
-        <span class="w-2 h-2 rounded-full bg-green-500"></span>
-        <span>{{ vms.filter(v => v.state === 'running').length }} Running</span>
+  <div class="bg-[#171c21] p-8 border border-[#424753]/10">
+    <div class="flex justify-between items-center mb-8">
+      <h3 class="font-bold text-xl text-[#dee3e9]">Virtual Machines</h3>
+      <div class="flex gap-4">
+        <span class="font-mono text-[10px] text-[#adc6ff]">{{ runningCount(vms) }} RUNNING</span>
+        <span class="font-mono text-[10px] text-[#8c909f]">{{ stoppedCount(vms) }} STOPPED</span>
       </div>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading && vms.length === 0" class="p-12 text-center">
       <div class="animate-pulse text-[#adc6ff] text-2xl mb-4">⚡</div>
-      <p class="text-[#8c909f] text-sm">Loading VMs...</p>
+      <p class="text-[#8c909f] text-sm font-mono">Loading VMs...</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="vms.length === 0" class="p-12 text-center">
       <span class="text-4xl mb-4 block">🖥️</span>
       <p class="text-[#8c909f]">No virtual machines configured</p>
-      <p class="text-[#8c909f]/60 text-sm mt-2">Use the CLI to create your first VM</p>
+      <p class="text-[#8c909f]/60 text-sm mt-2 font-mono">Use the CLI to create your first VM</p>
     </div>
 
     <!-- VM List -->
-    <div v-else class="divide-y divide-[#424753]/10">
+    <div v-else class="space-y-4">
       <div 
         v-for="vm in vms" 
         :key="vm.uuid"
-        class="group p-4 hover:bg-[#1b2025] transition-all cursor-pointer"
+        class="bg-[#1b2025] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-2 cursor-pointer hover:bg-[#252a30] transition-all"
+        :class="getStateBorderColor(vm.state)"
         @click="emit('select', vm)"
       >
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <!-- Status Indicator -->
-            <div class="relative">
-              <div 
-                class="w-3 h-3 rounded-full"
-                :class="getStateColor(vm.state)"
-              ></div>
-              <div 
-                v-if="vm.state === 'running'"
-                class="absolute inset-0 w-3 h-3 rounded-full bg-green-500 animate-ping opacity-30"
-              ></div>
-            </div>
-            
-            <!-- VM Info -->
-            <div>
-              <h3 class="font-bold text-[#dee3e9] group-hover:text-[#adc6ff] transition-colors">
-                {{ vm.name }}
-              </h3>
-              <div class="flex items-center gap-3 mt-1 text-xs text-[#8c909f] font-mono">
-                <span>{{ vm.cpus }} CPU</span>
-                <span>•</span>
-                <span>{{ formatMemory(vm.memory_mb) }}</span>
-                <span>•</span>
-                <span>{{ vm.disk_gb }} GB</span>
-              </div>
-            </div>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-[#30353a] flex items-center justify-center rounded-sm">
+            <span class="material-symbols-outlined text-[#8c909f]">terminal</span>
           </div>
-
-          <!-- Actions -->
-          <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div>
+            <h4 class="text-sm font-bold text-[#dee3e9]">{{ vm.name }}</h4>
+            <p class="font-mono text-[9px] text-[#8c909f] uppercase">
+              {{ vm.state.toUpperCase() }} • {{ vm.cpus }} vCPUs • {{ formatMemory(vm.memory_mb) }} RAM
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full" :class="getStateColor(vm.state)"></span>
+            <span class="font-mono text-[10px] uppercase" :class="{
+              'text-green-500': vm.state === 'running',
+              'text-slate-500': vm.state === 'stopped',
+              'text-blue-500': vm.state === 'paused'
+            }">{{ vm.state }}</span>
+          </div>
+          
+          <div class="flex gap-2">
             <button 
               v-if="vm.state === 'stopped'"
               @click.stop="emit('action', vm.name, 'start')"
-              class="px-3 py-1.5 bg-green-500/20 text-green-400 rounded text-xs font-bold hover:bg-green-500/30 transition-colors"
+              class="w-8 h-8 flex items-center justify-center bg-[#30353a] hover:bg-green-500 transition-colors group rounded-sm"
             >
-              START
+              <span class="material-symbols-outlined text-xs group-hover:text-white">play_arrow</span>
             </button>
             <button 
               v-if="vm.state === 'running'"
               @click.stop="emit('action', vm.name, 'stop')"
-              class="px-3 py-1.5 bg-yellow-500/20 text-yellow-400 rounded text-xs font-bold hover:bg-yellow-500/30 transition-colors"
+              class="w-8 h-8 flex items-center justify-center bg-[#30353a] hover:bg-red-500 transition-colors group rounded-sm"
             >
-              STOP
+              <span class="material-symbols-outlined text-xs group-hover:text-white">stop</span>
             </button>
-            <button 
-              @click.stop="emit('action', vm.name, 'destroy')"
-              class="px-3 py-1.5 bg-red-500/20 text-red-400 rounded text-xs font-bold hover:bg-red-500/30 transition-colors"
-            >
-              DESTROY
+            <button class="w-8 h-8 flex items-center justify-center bg-[#30353a] hover:bg-[#0969da] transition-colors group rounded-sm">
+              <span class="material-symbols-outlined text-xs group-hover:text-white">keyboard</span>
             </button>
           </div>
-        </div>
-
-        <!-- VM ID -->
-        <div class="mt-2 ml-7">
-          <span class="text-[10px] font-mono text-[#8c909f]/60">UUID: {{ vm.uuid.substring(0, 8) }}...</span>
         </div>
       </div>
     </div>
