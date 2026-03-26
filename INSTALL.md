@@ -58,7 +58,7 @@ This creates a manifest at `/usr/local/var/db/veln/manifest` that tracks every f
 **Uninstall cleanly:**
 ```bash
 # Using the installed uninstaller
-veln self uninstall
+veln tools --uninstall
 
 # Or with just:
 just uninstall
@@ -151,13 +151,13 @@ If you installed from source with the install script:
 
 ```bash
 # Interactive uninstall
-sudo veln self uninstall
+sudo veln tools --uninstall
 
 # Non-interactive (auto-yes)
-sudo veln self uninstall --yes
+sudo veln tools --uninstall --yes
 
 # Dry run (show what would be removed)
-sudo veln self uninstall --dry-run
+sudo veln tools --uninstall --dry-run
 
 # Or use just:
 just uninstall
@@ -178,7 +178,7 @@ To remove veln AND all VMs, configs, and ZFS datasets:
 
 ```bash
 # WARNING: This deletes everything!
-sudo veln self uninstall --purge
+sudo veln tools --uninstall --purge
 
 # Or with just:
 just uninstall-purge
@@ -306,7 +306,7 @@ sudo rm -rf /usr/local/var/db/veln
 ```bash
 # Ensure you're root for install/uninstall
 sudo ./scripts/install.sh
-sudo veln self uninstall
+sudo veln tools --uninstall
 ```
 
 ### Package Won't Install
@@ -326,7 +326,7 @@ pkg add -f ./packages/veln-*.pkg
 | Method | Best For | Install | Uninstall | Updates |
 |--------|----------|---------|-----------|---------|
 | Package | Quick test | `pkg add` | `pkg remove` | Manual |
-| Source + Tracking | Development | `./scripts/install.sh` | `veln self uninstall` | Re-run install |
+| Source + Tracking | Development | `./scripts/install.sh` | `veln tools --uninstall` | Re-run install |
 | Local Repo | Multiple systems | `pkg install` | `pkg remove` | Update repo |
 | FreeBSD Port | Production | `make install` | `make deinstall` | Port upgrade |
 

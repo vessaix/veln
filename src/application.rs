@@ -1,4 +1,4 @@
-use crate::cli::{Commands, IsoCommands, SelfCommands, SnapshotCommands, TemplateCommands};
+use crate::cli::{Commands, IsoCommands, SnapshotCommands, TemplateCommands};
 use crate::config::Config;
 use crate::domain::vm::{VirtualMachine, VmConfig, VmState};
 use crate::domain::{RequirementsChecker, ResourceMonitor, VmRepository, VmRuntime};
@@ -80,11 +80,24 @@ pub fn run(command: Commands) -> Result<()> {
                 cmd_template_delete(name, yes)?;
             }
         },
-        Commands::Self_ { command } => match command {
-            SelfCommands::Uninstall { yes, dry_run, purge, prefix } => {
-                cmd_self_uninstall(yes, dry_run, purge, prefix)?;
+        Commands::Tools { uninstall, yes, dry_run, purge, prefix } => {
+            if uninstall {
+                cmd_tools_uninstall(yes, dry_run, purge, prefix)?;
+            } else {
+                println!("Veln Tools");
+                println!("==========");
+                println!();
+                println!("Available options:");
+                println!("  --uninstall    Uninstall veln from the system");
+                println!("  --yes          Skip confirmation prompt");
+                println!("  --dry-run      Show what would be removed without removing");
+                println!("  --purge        Remove all data including VMs and ZFS datasets");
+                println!("  --prefix       Installation prefix (default: /usr/local)");
+                println!();
+                println!("Example:");
+                println!("  veln tools --uninstall --yes --purge");
             }
-        },
+        }
     }
 
     Ok(())
@@ -847,7 +860,7 @@ fn require_root() -> Result<()> {
     Ok(())
 }
 
-fn cmd_self_uninstall(yes: bool, dry_run: bool, purge: bool, prefix: String) -> Result<()> {
+fn cmd_tools_uninstall(yes: bool, dry_run: bool, purge: bool, prefix: String) -> Result<()> {
     println!("Veln Self-Uninstall");
     println!("===================");
     println!();

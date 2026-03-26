@@ -118,11 +118,23 @@ pub enum Commands {
         port: u16,
     },
 
-    /// Self-management commands
-    #[command(name = "self")]
-    Self_ {
-        #[command(subcommand)]
-        command: SelfCommands,
+    /// Tools and maintenance commands
+    Tools {
+        /// Uninstall veln from the system
+        #[arg(long)]
+        uninstall: bool,
+        /// Skip confirmation prompt
+        #[arg(short, long)]
+        yes: bool,
+        /// Show what would be removed without removing
+        #[arg(long)]
+        dry_run: bool,
+        /// Remove all data including VMs and ZFS datasets
+        #[arg(long)]
+        purge: bool,
+        /// Installation prefix (default: /usr/local)
+        #[arg(short, long, default_value = "/usr/local")]
+        prefix: String,
     },
 }
 
@@ -278,24 +290,5 @@ pub enum ApiCommands {
         /// Port (default: 8080)
         #[arg(short, long, default_value = "8080")]
         port: u16,
-    },
-}
-
-#[derive(Subcommand)]
-pub enum SelfCommands {
-    /// Uninstall veln from the system
-    Uninstall {
-        /// Skip confirmation prompt
-        #[arg(short, long)]
-        yes: bool,
-        /// Show what would be removed without removing
-        #[arg(long)]
-        dry_run: bool,
-        /// Remove all data including VMs and ZFS datasets
-        #[arg(long)]
-        purge: bool,
-        /// Installation prefix (default: /usr/local)
-        #[arg(short, long, default_value = "/usr/local")]
-        prefix: String,
     },
 }
