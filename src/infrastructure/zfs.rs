@@ -17,9 +17,18 @@ impl ZfsRepository {
     /// # Errors
     /// Returns `VelnError::ZfsError` if the pool is not available
     pub fn new(config: &Config) -> Result<Self> {
+        // Convert vm_root path to a valid ZFS dataset name
+        // e.g., "/usr/local/vms" -> "usr/local/vms" (remove leading slash)
+        let vm_root_clean = config.vm_root.trim_start_matches('/');
+        let root_dataset = if vm_root_clean.is_empty() {
+            config.zfs_pool.clone()
+        } else {
+            format!("{}/{}", config.zfs_pool, vm_root_clean)
+        };
+        
         let repo = Self {
             pool: config.zfs_pool.clone(),
-            root_dataset: format!("{}/{}", config.zfs_pool, config.vm_root),
+            root_dataset,
         };
 
         // Ensure root dataset exists
