@@ -117,7 +117,7 @@ async function handleSubmit() {
                 <label class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] block" for="api_key">
                   API Access Key
                 </label>
-                <div class="relative group">
+                <div class="input-wrapper relative">
                   <input 
                     id="api_key"
                     v-model="apiKey"
@@ -129,7 +129,7 @@ async function handleSubmit() {
                     :disabled="loading"
                   />
                   <!-- Glow effect line -->
-                  <div class="absolute bottom-0 left-0 w-full h-[2px] bg-[#adc6ff] shadow-[0_2px_10px_rgba(173,198,255,0.4)] opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div class="input-glow-line absolute bottom-0 left-0 w-full h-[2px] bg-[#adc6ff] shadow-[0_2px_10px_rgba(173,198,255,0.4)] opacity-0 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 <p class="font-mono text-[9px] text-[#8c909f]/70 mt-1">Enter your authentication token</p>
               </div>
@@ -188,3 +188,10 @@ async function handleSubmit() {
     <div class="fixed inset-0 pointer-events-none opacity-[0.02] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')] mix-blend-overlay"></div>
   </div>
 </template>
+
+<style scoped>
+/* Input glow effect - sibling selector approach */
+.input-wrapper:focus-within .input-glow-line {
+  opacity: 1;
+}
+</style>
