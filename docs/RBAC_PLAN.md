@@ -56,7 +56,35 @@ auth_enabled = true
 
 **Use Case:** Monitoring dashboards, read-only access for support staff.
 
-### Generating API Keys
+### Managing API Keys
+
+**Generate a new API key:**
+```bash
+# Interactive (prompts for key or auto-generates)
+sudo veln api-key generate --name "Web Dashboard" --role admin
+
+# Auto-generate secure key
+sudo veln api-key generate --name "CI/CD Pipeline" --role operator --auto
+
+# Available roles: admin, operator, viewer
+```
+
+**List all API keys:**
+```bash
+# Show all configured keys (truncated for security)
+sudo veln api-key list
+```
+
+**Revoke an API key:**
+```bash
+# Revoke by key prefix (first 8+ characters)
+sudo veln api-key revoke abc12345
+
+# Skip confirmation
+sudo veln api-key revoke abc12345 --yes
+```
+
+**Manual method (if needed):**
 
 ```bash
 # Generate a secure random key
