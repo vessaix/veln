@@ -21,7 +21,7 @@
 - [x] Create src/domain/resources.rs - ResourceMonitor with safety buffers
 - [x] Update src/lib.rs to include domain module
 - [x] Add new error variants for host requirements and resources
-- [x] Create doc/DOMAIN.md documentation with FreeBSD Handbook references
+- [x] Create docs/DOMAIN.md documentation with FreeBSD Handbook references
 
 ## CLI Integration Phase
 - [x] Add Create command to CLI with args (--memory, --cpus, --disk)
@@ -35,7 +35,7 @@
 - [x] Create src/infrastructure/zfs.rs - ZfsRepository implementation
 - [x] Create src/infrastructure/bhyve.rs - BhyveRuntime implementation
 - [x] Update src/lib.rs to include infrastructure module
-- [x] Create doc/INFRASTRUCTURE.md with ZFS and bhyve references
+- [x] Create docs/INFRASTRUCTURE.md with ZFS and bhyve references
 - [x] Wire ZfsRepository into application commands (list, create)
 - [x] Wire BhyveRuntime into start command
 - [x] Use ZVOLs instead of sparse files (`zfs create -V`)

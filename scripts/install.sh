@@ -170,9 +170,9 @@ install_files() {
     fi
     
     # Install man page if exists
-    if [ -f doc/veln.1 ]; then
+    if [ -f docs/veln.1 ]; then
         log_info "Installing man page..."
-        install -m 644 doc/veln.1 "${dest_prefix}/share/man/man1/veln.1"
+        install -m 644 docs/veln.1 "${dest_prefix}/share/man/man1/veln.1"
         if [ "$is_package" -eq 0 ]; then
             add_to_manifest "${dest_prefix}/share/man/man1/veln.1" "man"
         fi

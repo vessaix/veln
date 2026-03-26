@@ -376,4 +376,4 @@ veln --help
 
 - **GitHub:** https://github.com/vessaix/veln
 - **Issues:** https://github.com/vessaix/veln/issues
-- **Documentation:** See `README.md` and `doc/` directory
+- **Documentation:** See `README.md` and `docs/` directory
