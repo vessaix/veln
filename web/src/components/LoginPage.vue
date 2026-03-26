@@ -117,7 +117,7 @@ async function handleSubmit() {
                 <label class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] block" for="api_key">
                   API Access Key
                 </label>
-                <div class="relative">
+                <div class="relative group">
                   <input 
                     id="api_key"
                     v-model="apiKey"
@@ -125,9 +125,11 @@ async function handleSubmit() {
                     placeholder="veln-api-key-xxx..."
                     required
                     autocomplete="off"
-                    class="w-full bg-[#171c21] text-[#dee3e9] font-mono text-sm py-3.5 px-4 rounded-sm placeholder-[#8c909f]/50 border-none border-b-2 border-transparent focus:border-b-[#adc6ff] focus:outline-none focus:shadow-[0_2px_20px_rgba(173,198,255,0.3)] transition-all"
+                    class="w-full bg-[#171c21] text-[#dee3e9] font-mono text-sm py-3.5 px-4 rounded-sm placeholder-[#8c909f]/50 border-0 border-b-2 border-transparent focus:border-b-[#adc6ff] focus:outline-none focus:ring-0 transition-all"
                     :disabled="loading"
                   />
+                  <!-- Glow effect line -->
+                  <div class="absolute bottom-0 left-0 w-full h-[2px] bg-[#adc6ff] shadow-[0_2px_10px_rgba(173,198,255,0.4)] opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 <p class="font-mono text-[9px] text-[#8c909f]/70 mt-1">Enter your authentication token</p>
               </div>
@@ -152,8 +154,9 @@ async function handleSubmit() {
 
             <!-- Help Link -->
             <div class="mt-8 pt-6 border-t border-[#424753]/10 flex justify-center">
-              <a href="https://github.com/vessaix/veln" class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] hover:text-[#adc6ff] transition-colors">
-                Documentation →
+              <a href="https://github.com/vessaix/veln" class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] hover:text-[#adc6ff] transition-colors flex items-center gap-1">
+                <span>Documentation</span>
+                <span class="material-symbols-outlined text-xs">arrow_forward</span>
               </a>
             </div>
           </div>
