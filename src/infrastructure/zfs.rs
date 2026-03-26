@@ -64,8 +64,9 @@ impl ZfsRepository {
             return Ok(());
         }
 
+        // Use -p flag to create parent datasets as needed
         let output = Command::new("zfs")
-            .args(["create", dataset])
+            .args(["create", "-p", dataset])
             .output()
             .map_err(|e| VelnError::ZfsError(format!("Failed to create dataset {dataset}: {e}")))?;
 
