@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>VELN | Authentication Gateway</title>
+<title>VELN | Terminal Access</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
   tailwind.config = {
     darkMode: "class",
@@ -15,15 +14,12 @@
         colors: {
           "primary-container": "#0969da",
           "tertiary-fixed-dim": "#d0bcff",
-          "tertiary-fixed": "#e9ddff",
           "surface-bright": "#353a3f",
           "inverse-surface": "#dee3e9",
           "on-primary-fixed": "#001a41",
           "surface-container-lowest": "#0a0f13",
           "error-container": "#93000a",
           "on-primary-container": "#ecefff",
-          "on-tertiary-fixed": "#23005c",
-          "on-tertiary-fixed-variant": "#5516be",
           "error": "#ffb4ab",
           "on-tertiary": "#3c0091",
           "inverse-on-surface": "#2c3136",
@@ -34,7 +30,6 @@
           "secondary": "#bec7d2",
           "background": "#0f1419",
           "surface-container-low": "#171c21",
-          "on-primary-fixed-variant": "#004493",
           "on-error": "#690005",
           "primary-fixed": "#d8e2ff",
           "surface-dim": "#0f1419",
@@ -62,15 +57,10 @@
           "tertiary": "#d0bcff"
         },
         fontFamily: {
-          "sans": ["Inter", "system-ui", "sans-serif"],
-          "display": ["Plus Jakarta Sans", "system-ui", "sans-serif"]
+          "headline": ["Plus Jakarta Sans"],
+          "body": ["Inter"]
         },
-        borderRadius: {
-          "DEFAULT": "0.125rem",
-          "lg": "0.25rem",
-          "xl": "0.5rem",
-          "full": "0.75rem"
-        }
+        borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"}
       }
     }
   }
@@ -79,41 +69,15 @@
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
-  
-  /* Kinetic Engine Design System - Glass morphism panels */
   .kinetic-glass {
-    background: rgba(27, 32, 37, 0.6);
+    background: rgba(23, 28, 33, 0.7);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
   }
-  
-  /* Gradient signature texture for CTAs - 135deg angle */
-  .kinetic-gradient {
-    background: linear-gradient(135deg, #adc6ff 0%, #0969da 100%);
-  }
-  
-  /* Glow effect for input focus - 2px bottom border with glow */
-  .input-container {
+  .glow-border-bottom {
     position: relative;
   }
-  
-  .input-glow {
-    background: rgba(23, 28, 33, 0.8);
-    border: none;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s ease;
-  }
-  
-  .input-glow:focus {
-    outline: none;
-    border-bottom-color: #adc6ff;
-  }
-  
-  .input-glow:focus + .input-glow-line {
-    opacity: 1;
-  }
-  
-  .input-glow-line {
+  .glow-border-bottom::after {
+    content: '';
     position: absolute;
     bottom: 0;
     left: 0;
@@ -123,116 +87,81 @@
     box-shadow: 0 2px 10px rgba(173, 198, 255, 0.4);
     opacity: 0;
     transition: opacity 0.3s ease;
-    pointer-events: none;
   }
-  
-  /* Ambient shadow for floating elements - tinted glow */
-  .ambient-shadow {
-    box-shadow: 0 8px 32px rgba(173, 198, 255, 0.06);
+  input:focus + .glow-border-bottom::after {
+    opacity: 1;
   }
-  
-  /* Ghost border - 15% opacity, barely visible */
-  .ghost-border {
-    border: 1px solid rgba(66, 71, 83, 0.15);
-  }
-  
-  /* Custom scrollbar hiding */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  
+</style>
+<style>
   body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background-color: #0f1419;
-    color: #dee3e9;
-  }
-  
-  /* Prevent layout shift from scrollbar */
-  html {
-    overflow-y: scroll;
+    min-height: max(884px, 100dvh);
   }
 </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<body class="bg-background text-on-surface font-body min-h-screen flex flex-col">
 
-<!-- Top Navigation - Simplified with tonal layering -->
-<header class="w-full sticky top-0 z-50 bg-[#0f1419]">
+<!-- Top Navigation -->
+<header class="w-full sticky top-0 bg-[#0f1419] z-50">
   <div class="flex items-center justify-between px-6 py-4 w-full max-w-screen-2xl mx-auto">
-    <div class="flex items-center gap-3">
-      <span class="material-symbols-outlined text-[#adc6ff] text-2xl" style="font-variation-settings: 'FILL' 1;">bolt</span>
-      <span class="font-display font-black tracking-tighter uppercase text-xl text-[#adc6ff]">VELN</span>
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#adc6ff]" style="font-variation-settings: 'FILL' 1;">terminal</span>
+      <span class="font-black tracking-tighter uppercase text-xl text-[#adc6ff]">VELN</span>
     </div>
-    <div class="font-mono text-[10px] tracking-[0.2em] text-[#8c909f] uppercase">System Authentication Required</div>
+    <div class="font-mono text-[10px] tracking-[0.2em] text-[#8c909f]">SYSTEM_AUTH_REQUIRED</div>
   </div>
 </header>
 
 <main class="flex-grow flex items-center justify-center p-6 relative overflow-hidden">
-  <!-- Background Accents - Tonal layering with blur -->
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] bg-[#0969da]/5 rounded-full blur-[120px] pointer-events-none"></div>
-  
-  <!-- Secondary accent for depth -->
-  <div class="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-[#adc6ff]/3 rounded-full blur-[100px] pointer-events-none"></div>
+  <!-- Background Accents -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none"></div>
   
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 max-w-6xl w-full items-center relative z-10">
-    
-    <!-- Hero Branding Column - Editorial Precision -->
+    <!-- Hero Branding Column -->
     <div class="lg:col-span-7 space-y-8">
       <div class="space-y-2">
-        <!-- Technical label in monospace -->
-        <span class="font-mono text-[#adc6ff] text-xs tracking-[0.3em] uppercase block mb-2">bhyve virtualization platform</span>
-        
-        <!-- Main headline - tight tracking, high weight -->
-        <h1 class="font-display text-5xl md:text-7xl font-extrabold tracking-tighter text-[#dee3e9] leading-none">
-          VELN <span class="text-[#0969da]">TERMINAL</span>
+        <span class="font-mono text-[#adc6ff] text-xs tracking-widest uppercase">bhyve VM management platform</span>
+        <h1 class="font-black text-5xl md:text-7xl tracking-tighter text-[#dee3e9] leading-none">
+          VELN <span class="text-[#adc6ff]">TERMINAL</span>
         </h1>
       </div>
-      
-      <!-- Description -->
       <p class="text-[#8c909f] max-w-md text-lg leading-relaxed">
-        High-performance virtualization management for FreeBSD. Secure, fast, and engineered for technical precision.
+        Access high-performance virtualization nodes. Precision-engineered for technical speed and cryptographic security.
       </p>
-      
-      <!-- Status Cards - Surface hierarchy with left borders -->
-      <div class="flex flex-wrap gap-4 pt-4">
-        <div class="bg-[#171c21] px-5 py-4 rounded-sm border-l-2 border-[#adc6ff] min-w-[140px]">
-          <div class="font-mono text-[10px] text-[#8c909f] uppercase tracking-widest mb-1">API Status</div>
-          <div class="font-mono text-sm text-[#dee3e9] flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            ONLINE
-          </div>
+      <div class="flex gap-4 pt-4">
+        <div class="bg-[#171c21] px-4 py-3 rounded-sm border-l-2 border-[#adc6ff]">
+          <div class="font-mono text-[10px] text-[#8c909f] uppercase">Node Status</div>
+          <div class="font-mono text-sm text-[#dee3e9]">ONLINE</div>
         </div>
-        
-        <div class="bg-[#171c21] px-5 py-4 rounded-sm border-l-2 border-[#d0bcff] min-w-[140px]">
-          <div class="font-mono text-[10px] text-[#8c909f] uppercase tracking-widest mb-1">Version</div>
+        <div class="bg-[#171c21] px-4 py-3 rounded-sm border-l-2 border-[#d0bcff]">
+          <div class="font-mono text-[10px] text-[#8c909f] uppercase">Version</div>
           <div class="font-mono text-sm text-[#dee3e9]">v0.1.0</div>
         </div>
       </div>
     </div>
     
-    <!-- Login Interface Column - Glass morphism panel -->
+    <!-- Login Interface Column -->
     <div class="lg:col-span-5">
-      <div class="kinetic-glass ghost-border p-8 md:p-10 rounded-lg ambient-shadow relative">
-        <!-- Subtle Corner Accent - ghost border style -->
-        <div class="absolute top-0 right-0 w-12 h-12 border-t border-r border-[#adc6ff]/20 rounded-tr-lg"></div>
+      <div class="kinetic-glass border border-[#424753]/15 p-8 md:p-10 rounded-lg shadow-2xl relative">
+        <!-- Subtle Corner Accent -->
+        <div class="absolute top-0 right-0 w-12 h-12 border-t border-r border-[#adc6ff]/30 rounded-tr-lg"></div>
         
         <form class="space-y-6" onsubmit="handleLogin(event)">
-          <!-- API Key Input - Monospace typography, glow effect -->
-          <div class="space-y-2">
-            <label class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] block" for="api_key">
+          <!-- API Key Input -->
+          <div class="space-y-1">
+            <label class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] px-1" for="api_key">
               API Access Key
             </label>
-            <div class="input-container relative">
+            <div class="relative">
               <input 
-                class="input-glow w-full bg-[#171c21] text-[#dee3e9] font-mono text-sm py-3.5 px-4 rounded-sm placeholder-[#8c909f]/50"
+                class="w-full bg-[#171c21] border-none focus:ring-0 text-[#dee3e9] font-mono text-sm py-3 px-4 transition-all"
                 id="api_key"
                 type="password"
                 placeholder="veln-api-key-xxx..."
                 required
                 autocomplete="off"
               />
-              <div class="input-glow-line"></div>
+              <div class="glow-border-bottom"></div>
             </div>
-            <p class="font-mono text-[9px] text-[#8c909f]/70 mt-1">Enter your authentication token</p>
           </div>
           
           <!-- Error Message Container -->
@@ -240,51 +169,42 @@
             <p class="font-mono text-[11px] text-red-400" id="error-text"></p>
           </div>
           
-          <!-- Submit Button - Gradient with kinetic energy -->
+          <!-- Submit Button -->
           <button 
             type="submit"
             id="submit-btn"
-            class="w-full kinetic-gradient text-[#002e68] font-display font-extrabold py-4 px-6 rounded-sm shadow-[0_0_20px_rgba(173,198,255,0.15)] hover:shadow-[0_0_30px_rgba(173,198,255,0.25)] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
+            class="w-full bg-gradient-to-r from-[#adc6ff] to-[#0969da] text-[#002e68] font-black py-4 px-6 rounded-sm shadow-[0_0_20px_rgba(173,198,255,0.2)] hover:shadow-[0_0_30px_rgba(173,198,255,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
           >
             <span id="btn-text">AUTHENTICATE</span>
-            <span id="btn-icon" class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            <span id="btn-icon" class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">bolt</span>
           </button>
         </form>
         
-        <!-- Help Link -->
-        <div class="mt-8 pt-6 border-t border-[#424753]/10 flex justify-center">
-          <a class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] hover:text-[#adc6ff] transition-colors flex items-center gap-1" href="https://github.com/vessaix/veln">
-            <span>Documentation</span>
-            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+        <div class="mt-8 flex justify-center">
+          <a class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] hover:text-[#adc6ff] transition-colors" href="https://github.com/vessaix/veln">
+            Documentation
           </a>
         </div>
-      </div>
-      
-      <!-- Quick Tip - Terminal chip style -->
-      <div class="mt-4 bg-[#171c21]/50 px-4 py-3 rounded-sm">
-        <p class="font-mono text-[9px] text-[#8c909f]">
-          <span class="text-[#adc6ff]">TIP:</span> Generate keys with <code class="text-[#d0bcff]">veln api-key generate</code>
-        </p>
       </div>
     </div>
   </div>
 </main>
 
-<!-- Footer - Dynamic copyright year -->
-<footer class="w-full border-t border-[#424753]/10 bg-[#0f1419]">
+<!-- Footer -->
+<footer class="w-full border-t border-[#424753]/15 bg-[#0f1419]">
   <div class="flex flex-col md:flex-row justify-between items-center px-8 py-6 w-full max-w-screen-2xl mx-auto">
-    <div class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f]/60">
-      © <span id="copyright-year"></span> VESSAIX. All rights reserved.
+    <div class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f]">
+      © <span id="copyright-year"></span> VESSAIX. ALL RIGHTS RESERVED.
     </div>
     <div class="flex gap-8 mt-4 md:mt-0">
-      <a class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f]/60 hover:text-[#adc6ff] transition-colors" href="https://github.com/vessaix/veln">GitHub</a>
-      <a class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f]/60 hover:text-[#adc6ff] transition-colors" href="#">Documentation</a>
+      <a class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] hover:text-[#adc6ff] transition-all" href="https://github.com/vessaix/veln">GitHub</a>
+      <a class="font-mono text-[10px] uppercase tracking-widest text-[#8c909f] hover:text-[#adc6ff] transition-all" href="#">Documentation</a>
     </div>
   </div>
 </footer>
 
-<!-- Decorative Screen Texture - subtle noise overlay -->
-<div class="fixed inset-0 pointer-events-none opacity-[0.02] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')] mix-blend-overlay"></div>
+<!-- Decorative Screen Texture -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
 
 <script>
   // Dynamic copyright year
@@ -309,7 +229,6 @@
     errorDiv.classList.add('hidden');
     
     try {
-      // Call the login endpoint
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
@@ -321,7 +240,6 @@
       const data = await response.json();
       
       if (data.success) {
-        // Store API key and redirect
         localStorage.setItem('veln_api_key', apiKey);
         localStorage.setItem('veln_user', JSON.stringify(data));
         window.location.href = '/dashboard';
@@ -329,21 +247,14 @@
         throw new Error(data.error || 'Authentication failed');
       }
     } catch (err) {
-      // Show error
       btn.disabled = false;
       btnText.textContent = 'AUTHENTICATE';
-      btnIcon.textContent = 'arrow_forward';
+      btnIcon.textContent = 'bolt';
       btnIcon.classList.remove('animate-spin');
       
-      errorText.textContent = err.message || 'Failed to connect to API server';
+      errorText.textContent = err.message;
       errorDiv.classList.remove('hidden');
     }
-  }
-  
-  // Check if already logged in
-  const existingKey = localStorage.getItem('veln_api_key');
-  if (existingKey) {
-    document.getElementById('api_key').value = existingKey;
   }
 </script>
 
