@@ -1,0 +1,60 @@
+default: check lint test
+
+check:
+    @echo "🔍 Type checking..."
+    npx vue-tsc --noEmit
+
+lint:
+    @echo "🔍 Linting..."
+    npx eslint . --ext .vue,.ts,.tsx
+
+lint-fix:
+    @echo "🔧 Auto-fixing lint issues..."
+    npx eslint . --ext .vue,.ts,.tsx --fix
+
+format:
+    @echo "🎨 Formatting code..."
+    npx prettier --write "src/**/*.{vue,ts,tsx,css}"
+
+format-check:
+    @echo "🔍 Checking formatting..."
+    npx prettier --check "src/**/*.{vue,ts,tsx,css}"
+
+test:
+    @echo "🧪 Running tests..."
+    npx vitest run
+
+test-watch:
+    @echo "🧪 Running tests in watch mode..."
+    npx vitest
+
+test-coverage:
+    @echo "📊 Running tests with coverage..."
+    npx vitest run --coverage
+
+audit:
+    @echo "🔒 Auditing dependencies..."
+    npm audit
+
+audit-fix:
+    @echo "🔧 Fixing audit issues..."
+    npm audit fix
+
+build:
+    @echo "🏗️ Building..."
+    npm run build
+
+dev:
+    @echo "🚀 Starting dev server..."
+    npm run dev
+
+qa: check lint format-check test build
+    @echo "✅ All checks passed!"
+
+qa-fix: lint-fix format qa
+    @echo "✅ All checks passed with fixes!"
+
+clean:
+    @echo "🧹 Cleaning..."
+    rm -rf dist/
+    rm -rf coverage/

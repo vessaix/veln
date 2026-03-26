@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VELN | Terminal Access</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500&amp;family=Space+Grotesk:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#0969da",
+              "tertiary-fixed-dim": "#d0bcff",
+              "tertiary-fixed": "#e9ddff",
+              "surface-bright": "#353a3f",
+              "inverse-surface": "#dee3e9",
+              "on-primary-fixed": "#001a41",
+              "surface-container-lowest": "#0a0f13",
+              "error-container": "#93000a",
+              "on-primary-container": "#ecefff",
+              "on-tertiary-fixed": "#23005c",
+              "on-tertiary-fixed-variant": "#5516be",
+              "error": "#ffb4ab",
+              "on-tertiary": "#3c0091",
+              "inverse-on-surface": "#2c3136",
+              "surface-container": "#1b2025",
+              "secondary-container": "#414a53",
+              "surface-variant": "#30353a",
+              "secondary-fixed": "#dae3ef",
+              "secondary": "#bec7d2",
+              "background": "#0f1419",
+              "surface-container-low": "#171c21",
+              "on-primary-fixed-variant": "#004493",
+              "on-error": "#690005",
+              "primary-fixed": "#d8e2ff",
+              "surface-dim": "#0f1419",
+              "secondary-fixed-dim": "#bec7d2",
+              "on-surface": "#dee3e9",
+              "on-secondary": "#29313a",
+              "outline": "#8c909f",
+              "on-secondary-container": "#b0b9c4",
+              "inverse-primary": "#005bc0",
+              "on-background": "#dee3e9",
+              "surface-tint": "#adc6ff",
+              "primary-fixed-dim": "#adc6ff",
+              "outline-variant": "#424753",
+              "tertiary-container": "#7c4ce6",
+              "on-error-container": "#ffdad6",
+              "on-secondary-fixed": "#141c25",
+              "surface-container-highest": "#30353a",
+              "on-tertiary-container": "#f5ecff",
+              "on-surface-variant": "#c2c6d6",
+              "on-primary": "#002e68",
+              "surface-container-high": "#252a30",
+              "primary": "#adc6ff",
+              "surface": "#0f1419",
+              "on-secondary-fixed-variant": "#3f4851",
+              "tertiary": "#d0bcff"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .kinetic-glass {
+        background: rgba(23, 28, 33, 0.7);
+        backdrop-filter: blur(20px);
+      }
+      .glow-border-bottom {
+        position: relative;
+      }
+      .glow-border-bottom::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #adc6ff;
+        box-shadow: 0 2px 10px rgba(173, 198, 255, 0.4);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      input:focus + .glow-border-bottom::after {
+        opacity: 1;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen flex flex-col">
+<!-- Top Navigation (Shell suppressed for login per instructions, using simplified TopAppBar) -->
+<header class="w-full top-0 sticky bg-[#0f1419] z-50">
+<div class="flex items-center justify-between px-6 py-4 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#adc6ff]" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="font-['Mona_Sans'] font-black tracking-tighter uppercase text-xl text-[#adc6ff]">KINETIC</span>
+</div>
+<div class="font-label text-[10px] tracking-[0.2em] text-outline-variant">SYSTEM_AUTH_REQUIRED</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center p-6 relative overflow-hidden">
+<!-- Background Accents -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 max-w-6xl w-full items-center relative z-10">
+<!-- Hero Branding Column -->
+<div class="lg:col-span-7 space-y-8">
+<div class="space-y-2">
+<span class="font-label text-primary text-xs tracking-widest uppercase">bhyve VM management platform</span>
+<h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tighter text-on-surface leading-none">
+                        VELN <span class="text-primary-fixed-dim">CARBON</span>
+</h1>
+</div>
+<p class="text-on-surface-variant max-w-md text-lg leading-relaxed">
+                    Access high-performance virtualization nodes. Precision-engineered for technical speed and cryptographic security.
+                </p>
+<div class="flex gap-4 pt-4">
+<div class="bg-surface-container-low px-4 py-3 rounded-sm border-l-2 border-primary">
+<div class="font-label text-[10px] text-outline uppercase">Node Status</div>
+<div class="font-mono text-sm text-on-surface">99.998% UPTIME</div>
+</div>
+<div class="bg-surface-container-low px-4 py-3 rounded-sm border-l-2 border-tertiary">
+<div class="font-label text-[10px] text-outline uppercase">Latency</div>
+<div class="font-mono text-sm text-on-surface">1.2ms AVG</div>
+</div>
+</div>
+</div>
+<!-- Login Interface Column -->
+<div class="lg:col-span-5">
+<div class="kinetic-glass border border-outline-variant/15 p-8 md:p-10 rounded-lg shadow-2xl relative">
+<!-- Subtle Corner Accent -->
+<div class="absolute top-0 right-0 w-12 h-12 border-t border-r border-primary/30 rounded-tr-lg"></div>
+<form class="space-y-6">
+<div class="space-y-1">
+<label class="font-label text-[10px] uppercase tracking-widest text-outline-variant px-1" for="infra_id">Infrastructure Identifier</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-low border-none focus:ring-0 text-on-surface font-mono text-sm py-3 px-4 transition-all" id="infra_id" placeholder="CORE-PRIME-01" type="text"/>
+<div class="glow-border-bottom"></div>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label text-[10px] uppercase tracking-widest text-outline-variant px-1" for="dev_id">Developer ID</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-low border-none focus:ring-0 text-on-surface font-mono text-sm py-3 px-4 transition-all" id="dev_id" placeholder="USR_8829_ALPHA" type="text"/>
+<div class="glow-border-bottom"></div>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label text-[10px] uppercase tracking-widest text-outline-variant px-1" for="access_key">Access Key</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-low border-none focus:ring-0 text-on-surface font-mono text-sm py-3 px-4 transition-all" id="access_key" placeholder="••••••••••••••••" type="password"/>
+<div class="glow-border-bottom"></div>
+</div>
+</div>
+<!-- MFA Section -->
+<div class="pt-4 mt-6 border-t border-outline-variant/10">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label text-[10px] uppercase tracking-widest text-tertiary">Multi-Factor Verification</span>
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex items-center justify-center gap-2 bg-surface-container border border-outline-variant/20 hover:bg-surface-container-high transition-colors py-3 px-4 group" type="button">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-lg">fingerprint</span>
+<span class="font-label text-[10px] uppercase text-on-surface-variant">U2F Key</span>
+</button>
+<button class="flex items-center justify-center gap-2 bg-surface-container border border-outline-variant/20 hover:bg-surface-container-high transition-colors py-3 px-4 group" type="button">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-lg">smartphone</span>
+<span class="font-label text-[10px] uppercase text-on-surface-variant">TOTP Auth</span>
+</button>
+</div>
+</div>
+<button class="w-full mt-8 bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-extrabold py-4 px-6 rounded-sm shadow-[0_0_20px_rgba(173,198,255,0.2)] hover:shadow-[0_0_30px_rgba(173,198,255,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group" type="submit">
+                            INIT_SESSION
+                            <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">bolt</span>
+</button>
+</form>
+<div class="mt-8 flex justify-center">
+<a class="font-label text-[10px] uppercase tracking-widest text-outline-variant hover:text-primary transition-colors" href="#">Request Access Credentials</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-[#424753]/15 bg-[#0f1419]">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 py-6 w-full max-w-screen-2xl mx-auto">
+<div class="font-mono text-[10px] uppercase tracking-widest text-slate-500">© 2024 KINETIC ENGINE. ALL RIGHTS RESERVED.</div>
+<div class="flex gap-8 mt-4 md:mt-0">
+<a class="font-mono text-[10px] uppercase tracking-widest text-slate-500 hover:text-[#adc6ff] transition-all" href="#">SECURITY</a>
+<a class="font-mono text-[10px] uppercase tracking-widest text-slate-500 hover:text-[#adc6ff] transition-all" href="#">SYSTEM_STATUS</a>
+<a class="font-mono text-[10px] uppercase tracking-widest text-slate-500 hover:text-[#adc6ff] transition-all" href="#">PRIVACY_PROMPT</a>
+</div>
+</div>
+</footer>
+<!-- Decorative Screen Texture -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+</body></html>
