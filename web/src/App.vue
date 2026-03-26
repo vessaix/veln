@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, provide } from 'vue'
 import VMList from './components/VMList.vue'
 import VMDetail from './components/VMDetail.vue'
 import SystemStats from './components/SystemStats.vue'
+import LoginPage from './components/LoginPage.vue'
 import type { VM, SystemInfo } from './types'
 
+// Authentication state
+const isAuthenticated = ref(false)
+const apiKey = ref('')
+
+// App data
 const vms = ref<VM[]>([])
 const selectedVM = ref<VM | null>(null)
 const systemInfo = ref<SystemInfo | null>(null)
@@ -14,10 +20,45 @@ const refreshInterval = ref<number | null>(null)
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
+// Provide auth context to child components
+provide('apiKey', apiKey)
+provide('isAuthenticated', isAuthenticated)
+
+function handleLogin(key: string) {
+  apiKey.value = key
+  isAuthenticated.value = true
+  // Start fetching data
+  refreshData()
+  refreshInterval.value = window.setInterval(refreshData, 5000)
+}
+
+function handleLogout() {
+  apiKey.value = ''
+  isAuthenticated.value = false
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+    refreshInterval.value = null
+  }
+  vms.value = []
+  selectedVM.value = null
+  systemInfo.value = null
+}
+
 async function fetchVMs() {
   try {
-    const response = await fetch(`${API_BASE}/vms`)
-    if (!response.ok) throw new Error('Failed to fetch VMs')
+    const response = await fetch(`${API_BASE}/vms`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey.value}`
+      }
+    })
+    if (!response.ok) {
+      if (response.status === 401) {
+        handleLogout()
+        error.value = 'Session expired. Please login again.'
+        return
+      }
+      throw new Error('Failed to fetch VMs')
+    }
     vms.value = await response.json()
     error.value = ''
   } catch (err) {
@@ -28,8 +69,18 @@ async function fetchVMs() {
 
 async function fetchSystemInfo() {
   try {
-    const response = await fetch(`${API_BASE}/info`)
-    if (!response.ok) throw new Error('Failed to fetch system info')
+    const response = await fetch(`${API_BASE}/info`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey.value}`
+      }
+    })
+    if (!response.ok) {
+      if (response.status === 401) {
+        handleLogout()
+        return
+      }
+      throw new Error('Failed to fetch system info')
+    }
     systemInfo.value = await response.json()
   } catch (err) {
     console.error('Error fetching system info:', err)
@@ -37,6 +88,7 @@ async function fetchSystemInfo() {
 }
 
 async function refreshData() {
+  if (!isAuthenticated.value) return
   await Promise.all([fetchVMs(), fetchSystemInfo()])
   loading.value = false
 }
@@ -44,9 +96,19 @@ async function refreshData() {
 async function handleVMAction(vmName: string, action: 'start' | 'stop' | 'destroy') {
   try {
     const response = await fetch(`${API_BASE}/vms/${vmName}/${action}`, {
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey.value}`
+      }
     })
-    if (!response.ok) throw new Error(`Failed to ${action} VM`)
+    if (!response.ok) {
+      if (response.status === 401) {
+        handleLogout()
+        error.value = 'Session expired. Please login again.'
+        return
+      }
+      throw new Error(`Failed to ${action} VM`)
+    }
     await refreshData()
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Action failed'
@@ -62,8 +124,7 @@ function closeDetail() {
 }
 
 onMounted(() => {
-  refreshData()
-  refreshInterval.value = window.setInterval(refreshData, 5000)
+  // Don't auto-start, wait for login
 })
 
 onUnmounted(() => {
@@ -74,7 +135,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#0f1419] text-[#dee3e9] font-sans">
+  <!-- Show Login Page when not authenticated -->
+  <LoginPage v-if="!isAuthenticated" @login="handleLogin" />
+  
+  <!-- Show Dashboard when authenticated -->
+  <div v-else class="min-h-screen bg-[#0f1419] text-[#dee3e9] font-sans">
     <!-- Top Navigation -->
     <header class="sticky top-0 z-50 bg-[#0f1419]/95 backdrop-blur-xl border-b border-[#424753]/20">
       <div class="flex items-center justify-between px-6 py-4 max-w-screen-2xl mx-auto">
@@ -96,6 +161,12 @@ onUnmounted(() => {
             :class="{ 'animate-spin': loading }"
           >
             <span class="text-[#adc6ff]">↻</span>
+          </button>
+          <button 
+            @click="handleLogout"
+            class="px-3 py-1.5 text-xs font-bold text-[#8c909f] hover:text-red-400 transition-colors"
+          >
+            LOGOUT
           </button>
         </div>
       </div>
