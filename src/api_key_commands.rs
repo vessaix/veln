@@ -64,14 +64,21 @@ auth_enabled = true\n\
     };
 
     // Check if [api.keys] section exists, add if not
+    let mut needs_newline = false;
     if !config_content.contains("[api.keys]") {
         if !config_content.contains("[api]") {
             config_content.push_str("\n[api]\nauth_enabled = true\n");
         }
         config_content.push_str("\n[api.keys]\n");
+    } else {
+        // Section exists, check if we need a newline before adding key
+        needs_newline = !config_content.ends_with('\n');
     }
 
-    // Add the new key
+    // Add the new key with proper newline separation
+    if needs_newline {
+        config_content.push('\n');
+    }
     let key_entry = format!("\"{}\" = {{ name = \"{}\", role = \"{}\" }}\n", api_key, name, role);
     config_content.push_str(&key_entry);
 
