@@ -1,4 +1,5 @@
-use crate::cli::{Commands, IsoCommands, SnapshotCommands, TemplateCommands};
+use crate::api_key_commands::{cmd_api_key_generate, cmd_api_key_list, cmd_api_key_revoke};
+use crate::cli::{ApiKeyCommands, Commands, IsoCommands, SnapshotCommands, TemplateCommands};
 use crate::config::Config;
 use crate::domain::vm::{VirtualMachine, VmConfig, VmState};
 use crate::domain::{RequirementsChecker, ResourceMonitor, VmRepository, VmRuntime};
@@ -98,6 +99,17 @@ pub fn run(command: Commands) -> Result<()> {
                 println!("  veln tools --uninstall --yes --purge");
             }
         }
+        Commands::ApiKey { command } => match command {
+            ApiKeyCommands::Generate { name, role, auto } => {
+                cmd_api_key_generate(name, role, auto)?;
+            }
+            ApiKeyCommands::List => {
+                cmd_api_key_list()?;
+            }
+            ApiKeyCommands::Revoke { key, yes } => {
+                cmd_api_key_revoke(key, yes)?;
+            }
+        },
     }
 
     Ok(())

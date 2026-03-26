@@ -22,6 +22,8 @@ serde_json = "1.0"
 toml = "0.8"
 is-root = "0.1"
 chrono = { version = "0.4", features = ["serde"] }
+rand = "0.8"
+hex = "0.4"
 # Note: rouille v3.6 uses buf_redux and multipart which trigger future-incompatibility warnings.
 # These are upstream issues in unmaintained dependencies. The warnings are harmless and don't
 # affect functionality. A migration to axum/actix-web is planned for a future release to resolve this.

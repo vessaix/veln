@@ -136,6 +136,12 @@ pub enum Commands {
         #[arg(short, long, default_value = "/usr/local")]
         prefix: String,
     },
+
+    /// Manage API keys for REST API authentication
+    ApiKey {
+        #[command(subcommand)]
+        command: ApiKeyCommands,
+    },
 }
 
 #[derive(Subcommand)]
@@ -290,5 +296,33 @@ pub enum ApiCommands {
         /// Port (default: 8080)
         #[arg(short, long, default_value = "8080")]
         port: u16,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum ApiKeyCommands {
+    /// Generate a new API key and add it to config
+    Generate {
+        /// Name for the API key (e.g., "Web Dashboard", "CI/CD")
+        #[arg(short, long)]
+        name: String,
+        /// Role for the API key (admin, operator, viewer)
+        #[arg(short, long, default_value = "admin")]
+        role: String,
+        /// Auto-generate key instead of providing one
+        #[arg(long)]
+        auto: bool,
+    },
+
+    /// List all configured API keys
+    List,
+
+    /// Remove an API key from config
+    Revoke {
+        /// API key to revoke (full key or first 8 chars)
+        key: String,
+        /// Skip confirmation
+        #[arg(short, long)]
+        yes: bool,
     },
 }
