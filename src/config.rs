@@ -7,8 +7,14 @@ use crate::error::{Result, VelnError};
 pub struct Config {
     pub zfs_pool: String,
     pub vm_root: String,
+    #[serde(default = "default_iso_root")]
+    pub iso_root: String,
     #[serde(default)]
     pub api: ApiConfig,
+}
+
+fn default_iso_root() -> String {
+    "veln/isos".to_string()
 }
 
 #[derive(Debug, Deserialize, Clone)]

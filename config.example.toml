@@ -1,10 +1,22 @@
 # VELN Configuration Example with API Authentication
+# 
+# FreeBSD Path Conventions:
+# - Config files: /usr/local/etc/veln/
+# - VM data (ZFS): zroot/veln/vms/
+# - ISO images (ZFS): zroot/veln/isos/
+# - Logs: /var/log/veln/
+# - Runtime files: /var/run/veln/
 
 # ZFS pool for VM storage
 zfs_pool = "zroot"
 
-# Directory for VM configurations and metadata
-vm_root = "/usr/local/vms"
+# ZFS dataset path for VMs (relative to pool)
+# Creates: zroot/veln/vms
+vm_root = "veln/vms"
+
+# ZFS dataset path for ISO images
+# Creates: zroot/veln/isos
+iso_root = "veln/isos"
 
 # API Server Configuration
 [api]
@@ -14,7 +26,7 @@ auth_enabled = true
 
 # API Keys
 # Format: "api-key-string" = { name = "Description", role = "admin|operator|viewer" }
-# Generate secure keys with: openssl rand -hex 32
+# Generate keys automatically: veln api-key generate --name "My Key" --role admin --auto
 
 [api.keys]
 # Admin key - Full access to all operations
@@ -41,7 +53,7 @@ auth_enabled = true
   role = "admin" 
 }
 
-# Example: CI/CD Integration key
+# CI/CD Integration key
 "veln-ci-3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c" = { 
   name = "CI/CD Pipeline", 
   role = "operator" 

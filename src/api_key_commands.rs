@@ -45,8 +45,22 @@ pub fn cmd_api_key_generate(name: String, role: String, auto: bool) -> Result<()
     let mut config_content = if std::path::Path::new(&config_path).exists() {
         std::fs::read_to_string(&config_path).map_err(|e| VelnError::Config(format!("Failed to read config: {}", e)))?
     } else {
-        // Create default config
-        String::from("zfs_pool = \"zroot\"\nvm_root = \"/usr/local/vms\"\n\n[api]\nauth_enabled = true\n\n[api.keys]\n")
+        // Create default config following FreeBSD conventions
+        String::from("# Veln Configuration\n\
+# FreeBSD paths:\n\
+# - Config: /usr/local/etc/veln/\n\
+# - VM data: zroot/veln/\n\
+# - Logs: /var/log/veln/\n\
+# - Runtime: /var/run/veln/\n\
+\n\
+zfs_pool = \"zroot\"\n\
+vm_root = \"veln/vms\"\n\
+iso_root = \"veln/isos\"\n\
+\n\
+[api]\n\
+auth_enabled = true\n\
+\n\
+[api.keys]\n")
     };
 
     // Check if [api.keys] section exists, add if not
